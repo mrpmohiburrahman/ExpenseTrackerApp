@@ -8,6 +8,8 @@ import LoginScreen from '../screens/Auth/LoginScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen';
 import HomeScreen from '../screens/Home/HomeScreen';
 import {useAuth} from '../context/AuthContext';
+import AddIncomeScreen from '@screens/Income/AddIncomeScreen';
+import IncomeListScreen from '@screens/Income/IncomeListScreen';
 // Add other screens as needed
 
 const Stack = createNativeStackNavigator();
@@ -35,6 +37,11 @@ const RootNavigator: React.FC = () => {
       ) : (
         // User is not signed in
         <>
+          <Stack.Screen
+            name="AddIncomeScreen"
+            component={IncomeListScreen}
+            options={{headerShown: false}}
+          />
           <Stack.Screen
             name="Login"
             component={LoginScreen}
