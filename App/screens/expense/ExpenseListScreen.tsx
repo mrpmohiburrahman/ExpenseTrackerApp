@@ -20,6 +20,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
 import moment from 'moment'; // Ensure moment is installed
 import { PieChart } from 'react-native-gifted-charts'; // Ensure this is installed
+import { Colors } from 'App/constants/Colors';
+import VectorIcon from '@utils/VectorIcons';
+import { moderateScale } from 'react-native-size-matters';
+import HeaderWithActions from '@components/HeaderWithActions';
 
 const ExpenseListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -172,23 +176,18 @@ const ExpenseListScreen: React.FC = () => {
         )}
       </View>
 
-      {/* Header with Filter Button */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectedMonth(appliedMonth); // Initialize picker with current filter
-            setFilterModalVisible(true);
-          }}
-          style={styles.filterButton}>
-          <Text style={styles.filterButtonText}>Filter</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Expense List</Text>
-        {/* Placeholder for alignment */}
-        <View style={{ width: 60 }} />
-      </View>
 
-      {/* Optional: Display Applied Filter */}
-      <Text style={styles.appliedFilterText}>Showing: {moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}</Text>
+      {/* Reusable Header with Actions */}
+      <HeaderWithActions
+        title={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
+        onFilterPress={() => {
+          setSelectedMonth(appliedMonth); // Initialize picker with current filter
+          setFilterModalVisible(true);
+        }}
+        onAddPress={() => {
+          // Handle add income press
+        }}
+      />
 
       <FlatList
         data={filteredExpenses}
@@ -291,15 +290,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   filterButton: {
-    backgroundColor: '#007BFF',
+    flexDirection: 'row',
+    gap: 10,
     padding: 10,
     borderRadius: 5,
-    width: 60,
+    // width: 60,
     alignItems: 'center',
   },
   filterButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: Colors.text,
+    // fontWeight: 'bold',
+    fontWeight: '600',
   },
   headerTitle: {
     fontSize: 20,

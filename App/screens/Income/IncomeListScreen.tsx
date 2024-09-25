@@ -20,6 +20,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
 import moment from 'moment'; // Ensure moment is installed
 import { PieChart } from 'react-native-gifted-charts';
+import HeaderWithActions from '@components/HeaderWithActions';
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -166,19 +167,17 @@ const IncomeListScreen: React.FC = () => {
           // Optional: Add other PieChart props as needed
         />
       </View>
-      {/* Header with Filter Button */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectedMonth(appliedMonth); // Initialize picker with current filter
-            setFilterModalVisible(true);
-          }}
-          style={styles.filterButton}>
-          <Text style={styles.filterButtonText}>Filter</Text>
-        </TouchableOpacity>
-        {/* Placeholder for alignment */}
-        <View style={{ width: 60 }} />
-      </View>
+      {/* Reusable Header with Actions */}
+      <HeaderWithActions
+        title={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
+        onFilterPress={() => {
+          setSelectedMonth(appliedMonth); // Initialize picker with current filter
+          setFilterModalVisible(true);
+        }}
+        onAddPress={() => {
+          // Handle add income press
+        }}
+      />
 
       <FlatList
         data={filteredIncomes}
