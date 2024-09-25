@@ -176,7 +176,6 @@ const IncomeListScreen: React.FC = () => {
           style={styles.filterButton}>
           <Text style={styles.filterButtonText}>Filter</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Income List</Text>
         {/* Placeholder for alignment */}
         <View style={{ width: 60 }} />
       </View>

@@ -2,8 +2,7 @@
 
 import { deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
 import { RootState } from '@store/store';
-import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -18,8 +17,9 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { Picker } from '@react-native-picker/picker';
-import moment from 'moment';
+import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
+import moment from 'moment'; // Ensure moment is installed
+import { PieChart } from 'react-native-gifted-charts'; // Ensure this is installed
 
 const ExpenseListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -115,8 +115,63 @@ const ExpenseListScreen: React.FC = () => {
     setFilterModalVisible(false);
   };
 
+  // Helper function to truncate text to one word
+  const truncateToOneWord = (text: string) => {
+    return text.split(' ')[0];
+  };
+
+  // Define color list
+  const colorList = ['#619780', '#485B42', '#B97016', '#D9B758'];
+  const additionalColors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#8E44AD', '#16A085', '#E74C3C', '#F1C40F'];
+
+  // Compute pieData based on filteredExpenses
+  const pieData = useMemo(() => {
+    // Group expenses by name and sum amounts
+    const grouped = filteredExpenses.reduce(
+      (acc, expense) => {
+        acc[expense.name] = (acc[expense.name] || 0) + expense.amount;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const entries = Object.entries(grouped);
+
+    return entries.map(([name, value], index) => {
+      const truncatedName = truncateToOneWord(name);
+      let color = colorList[index % colorList.length];
+
+      if (index >= colorList.length) {
+        // Assign additional colors or generate random if exceeding predefined colors
+        color = additionalColors[index - colorList.length] || '#' + Math.floor(Math.random() * 16777215).toString(16);
+      }
+
+      return {
+        value,
+        color,
+        text: truncatedName,
+      };
+    });
+  }, [filteredExpenses]);
+
   return (
     <View style={styles.container}>
+      {/* Pie Chart */}
+      <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+        {pieData.length > 0 ? (
+          <PieChart
+            showText
+            textColor="white"
+            radius={150}
+            textSize={20}
+            data={pieData}
+            // Optional: Add other PieChart props as needed
+          />
+        ) : (
+          <Text style={styles.noDataText}>No expenses for selected month.</Text>
+        )}
+      </View>
+
       {/* Header with Filter Button */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -145,6 +200,7 @@ const ExpenseListScreen: React.FC = () => {
             <Text>{item.date}</Text>
           </TouchableOpacity>
         )}
+        ListEmptyComponent={<Text style={styles.noDataText}>No expenses found.</Text>}
       />
 
       {/* Modal for Editing/Deleting Expense */}
@@ -313,5 +369,11 @@ const styles = StyleSheet.create({
   picker: {
     height: Platform.OS === 'ios' ? 200 : 50,
     width: '100%',
+  },
+  noDataText: {
+    textAlign: 'center',
+    color: '#555',
+    marginTop: 20,
+    fontSize: 16,
   },
 });
