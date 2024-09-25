@@ -1,20 +1,10 @@
-
 // App/screens/IncomeListScreen.tsx
 
 import { deleteIncome, editIncome, IncomeItem } from '@store/slices/incomeSlice';
 import { RootState } from '@store/store';
+import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Button,
-  TextInput,
-  Alert,
-} from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal, Button, TextInput, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 const IncomeListScreen: React.FC = () => {
@@ -65,9 +55,16 @@ const IncomeListScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      {/* <Button
+        title="randome income"
+        onPress={() => {
+          console.log('🚀 ~ addRandomIncomes:root');
+          addRandomIncomes();
+        }}
+      /> */}
       <FlatList
         data={incomes}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => openModal(item)} style={styles.item}>
             <Text style={styles.itemText}>{item.name}</Text>
@@ -81,12 +78,7 @@ const IncomeListScreen: React.FC = () => {
       <Modal visible={modalVisible} animationType="slide">
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Edit Income</Text>
-          <TextInput
-            placeholder="Income Name"
-            value={editedName}
-            onChangeText={setEditedName}
-            style={styles.input}
-          />
+          <TextInput placeholder="Income Name" value={editedName} onChangeText={setEditedName} style={styles.input} />
           <TextInput
             placeholder="Date (YYYY-MM-DD)"
             value={editedDate}

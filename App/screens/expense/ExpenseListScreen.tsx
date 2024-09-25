@@ -1,21 +1,11 @@
-
 // App/screens/ExpenseListScreen.tsx
 
 import { deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
 import { RootState } from '@store/store';
+import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Button,
-  TextInput,
-  Alert,
-} from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { Alert, Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ExpenseListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -65,9 +55,15 @@ const ExpenseListScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      {/* <Button
+        title="randome expense"
+        onPress={() => {
+          addRandomExpenses();
+        }}
+      /> */}
       <FlatList
         data={expenses}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => openModal(item)} style={styles.item}>
             <Text style={styles.itemText}>{item.name}</Text>
@@ -81,12 +77,7 @@ const ExpenseListScreen: React.FC = () => {
       <Modal visible={modalVisible} animationType="slide">
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Edit Expense</Text>
-          <TextInput
-            placeholder="Expense Name"
-            value={editedName}
-            onChangeText={setEditedName}
-            style={styles.input}
-          />
+          <TextInput placeholder="Expense Name" value={editedName} onChangeText={setEditedName} style={styles.input} />
           <TextInput
             placeholder="Date (YYYY-MM-DD)"
             value={editedDate}
@@ -129,6 +120,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'red',
   },
   modalTitle: {
     fontSize: 22,

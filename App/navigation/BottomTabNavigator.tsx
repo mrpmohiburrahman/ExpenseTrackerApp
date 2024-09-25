@@ -61,7 +61,7 @@ const BottomTabNavigator: React.FC = () => {
             case 'Goals':
               return (
                 <VectorIcon.MaterialCommunityIcons
-                  name={focused ? 'bullseye-arrow' : 'bullseye-arrow-outline'}
+                  name={focused ? 'bullseye-arrow' : 'bullseye-arrow'}
                   size={size}
                   color={color}
                 />
