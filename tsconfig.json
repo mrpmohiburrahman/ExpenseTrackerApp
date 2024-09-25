@@ -1,4 +1,3 @@
-// tsconfig.json
 {
   "compilerOptions": {
     "target": "esnext",
@@ -14,23 +13,56 @@
     "isolatedModules": true,
     "baseUrl": "./",
     "paths": {
+      "@api/*": [
+        "App/api/*"
+      ],
+      "@assets/*": [
+        "App/assets/*"
+      ],
       "@components/*": [
         "App/components/*"
       ],
-      "@screens/*": [
-        "App/screens/*"
+      "@config/*": [
+        "App/config/*"
       ],
-      "@context/*": [
-        "App/context/*"
+      "@contexts/*": [
+        "App/contexts/*"
       ],
-      "@navigation/*": [
-        "App/navigation/*"
+      "@data/*": [
+        "App/data/*"
       ],
       "@hooks/*": [
         "App/hooks/*"
       ],
+      "@i18n/*": [
+        "App/i18n/*"
+      ],
+      "@lang/*": [
+        "App/lang/*"
+      ],
+      "@lib/*": [
+        "App/lib/*"
+      ],
+      "@modals/*": [
+        "App/modals/*"
+      ],
+      "@navigation/*": [
+        "App/navigation/*"
+      ],
+      "@realmApi/*": [
+        "App/realmApi/*"
+      ],
+      "@schemas/*": [
+        "App/schemas/*"
+      ],
+      "@screens/*": [
+        "App/screens/*"
+      ],
       "@services/*": [
         "App/services/*"
+      ],
+      "@store/*": [
+        "App/store/*"
       ],
       "@styles/*": [
         "App/styles/*"
