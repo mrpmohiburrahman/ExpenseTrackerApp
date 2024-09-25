@@ -23,6 +23,9 @@ import moment from 'moment'; // Ensure moment is installed
 import { PieChart } from 'react-native-gifted-charts';
 import HeaderWithActions from '@components/HeaderWithActions';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { Colors } from 'App/constants/Colors';
+import { moderateScale } from 'react-native-size-matters';
+import TransactionList from '@components/TransactionList';
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -227,17 +230,7 @@ const IncomeListScreen: React.FC = () => {
         }}
       />
 
-      <FlatList
-        data={filteredIncomes}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => openModal(item)} style={styles.item}>
-            <Text style={styles.itemText}>{item.name}</Text>
-            <Text>${item.amount.toFixed(2)}</Text>
-            <Text>{item.date}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      <TransactionList data={filteredIncomes} onItemPress={openModal} type="income" />
 
       {/* Modal for Editing/Deleting Income */}
       <Modal
@@ -379,15 +372,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  item: {
-    padding: 12,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
-  },
-  itemText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+  item: {},
+  itemText: {},
   modalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background

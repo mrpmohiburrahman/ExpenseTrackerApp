@@ -26,6 +26,7 @@ import { Colors } from 'App/constants/Colors';
 import VectorIcon from '@utils/VectorIcons';
 import { moderateScale } from 'react-native-size-matters';
 import HeaderWithActions from '@components/HeaderWithActions';
+import TransactionList from '@components/TransactionList';
 
 const ExpenseListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -211,18 +212,7 @@ const ExpenseListScreen: React.FC = () => {
         }}
       />
 
-      <FlatList
-        data={filteredExpenses}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => openModal(item)} style={styles.item}>
-            <Text style={styles.itemText}>{item.name}</Text>
-            <Text>${item.amount.toFixed(2)}</Text>
-            <Text>{item.date}</Text>
-          </TouchableOpacity>
-        )}
-        ListEmptyComponent={<Text style={styles.noDataText}>No expenses found.</Text>}
-      />
+      <TransactionList data={filteredExpenses} onItemPress={openModal} type="expense" />
 
       {/* Modal for Editing/Deleting Expense */}
       <Modal

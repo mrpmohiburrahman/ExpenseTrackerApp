@@ -4,14 +4,18 @@
  */
 
 export const Colors = {
-  primary: "#485B42", // expense on signup screen
-  secondary: "#CEA868", //"tracker", notification, profile
-  text: "#000000",
-  signin: "#27304B", // signup
-  signinSub: "#617A97", // google sign in, text input, not a memeber
-  recentTransaction: "#828282",
-  seeAll: "#457FD6", // salaryIn
-  cost: "#F17248",
-  tab: "#ADAFBD",
-  bottomTab:"#707070"
+  primary: '#485B42', // expense on signup screen
+  secondary: '#CEA868', //"tracker", notification, profile
+  text: '#000000',
+  signin: '#27304B', // signup
+  signinSub: '#617A97', // google sign in, text input, not a memeber
+  recentTransaction: '#828282',
+  seeAll: '#457FD6', // salaryIn
+  cost: '#F17248',
+  tab: '#ADAFBD',
+  bottomTab: '#707070',
+  listSubItem: '#808080',
+  info: '#1FA314',
+  danger: '#F17248',
+  white: 'white',
 };
