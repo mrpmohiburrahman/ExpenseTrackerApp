@@ -169,11 +169,12 @@ const IncomeListScreen: React.FC = () => {
       </View>
       {/* Reusable Header with Actions */}
       <HeaderWithActions
-        title={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
+        filterTitle={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
         onFilterPress={() => {
           setSelectedMonth(appliedMonth); // Initialize picker with current filter
           setFilterModalVisible(true);
         }}
+        addButtonTitle="+Add Income"
         onAddPress={() => {
           // Handle add income press
         }}

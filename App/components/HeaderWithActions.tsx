@@ -6,21 +6,27 @@ import { moderateScale } from 'react-native-size-matters';
 import { Colors } from 'App/constants/Colors';
 
 interface HeaderWithActionsProps {
-  title: string;
+  filterTitle: string;
+  addButtonTitle?: string; // New prop for customizing the add button title
   onFilterPress: () => void;
   onAddPress: () => void;
 }
 
-const HeaderWithActions: React.FC<HeaderWithActionsProps> = ({ title, onFilterPress, onAddPress }) => {
+const HeaderWithActions: React.FC<HeaderWithActionsProps> = ({
+  filterTitle,
+  addButtonTitle = '+Add Income', // Default value
+  onFilterPress,
+  onAddPress,
+}) => {
   return (
     <View style={styles.header}>
       <TouchableOpacity onPress={onFilterPress} style={styles.filterButton}>
-        <Text style={styles.filterButtonText}>{title}</Text>
+        <Text style={styles.filterButtonText}>{filterTitle}</Text>
         <VectorIcon.SimpleLineIcons name="arrow-down" size={moderateScale(10)} />
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onAddPress} style={styles.addButton}>
-        <Text style={styles.filterButtonText}>+Add Income</Text>
+        <Text style={styles.filterButtonText}>{addButtonTitle}</Text>
       </TouchableOpacity>
     </View>
   );
