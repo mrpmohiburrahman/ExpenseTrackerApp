@@ -3,7 +3,7 @@
 import { deleteIncome, editIncome, IncomeItem } from '@store/slices/incomeSlice';
 import { RootState } from '@store/store';
 import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
 import moment from 'moment'; // Ensure moment is installed
+import { PieChart } from 'react-native-gifted-charts';
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -114,8 +115,57 @@ const IncomeListScreen: React.FC = () => {
     setFilterModalVisible(false);
   };
 
+  // Helper function to truncate text to one word
+  const truncateToOneWord = (text: string) => {
+    return text.split(' ')[0];
+  };
+
+  // Define color list
+  const colorList = ['#619780', '#485B42', '#B97016', '#D9B758'];
+  const additionalColors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#8E44AD', '#16A085', '#E74C3C', '#F1C40F'];
+
+  // Compute pieData based on filteredIncomes
+  const pieData = useMemo(() => {
+    // Group incomes by name and sum amounts
+    const grouped = filteredIncomes.reduce(
+      (acc, income) => {
+        acc[income.name] = (acc[income.name] || 0) + income.amount;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const entries = Object.entries(grouped);
+
+    return entries.map(([name, value], index) => {
+      const truncatedName = truncateToOneWord(name);
+      let color = colorList[index % colorList.length];
+
+      if (index >= colorList.length) {
+        // Assign additional colors or generate random if exceeding predefined colors
+        color = additionalColors[index - colorList.length] || '#' + Math.floor(Math.random() * 16777215).toString(16);
+      }
+
+      return {
+        value,
+        color,
+        text: truncatedName,
+      };
+    });
+  }, [filteredIncomes]);
+
   return (
     <View style={styles.container}>
+      <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+        <PieChart
+          showText
+          textColor="white"
+          radius={150}
+          textSize={20}
+          data={pieData}
+          // Optional: Add other PieChart props as needed
+        />
+      </View>
       {/* Header with Filter Button */}
       <View style={styles.header}>
         <TouchableOpacity
