@@ -1,3 +1,49 @@
+// tsconfig.json
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "jsx": "react",
+    "strict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "baseUrl": "./",
+    "paths": {
+      "@components/*": [
+        "App/components/*"
+      ],
+      "@screens/*": [
+        "App/screens/*"
+      ],
+      "@context/*": [
+        "App/context/*"
+      ],
+      "@navigation/*": [
+        "App/navigation/*"
+      ],
+      "@hooks/*": [
+        "App/hooks/*"
+      ],
+      "@services/*": [
+        "App/services/*"
+      ],
+      "@styles/*": [
+        "App/styles/*"
+      ],
+      "@utils/*": [
+        "App/utils/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
+  ]
 }
