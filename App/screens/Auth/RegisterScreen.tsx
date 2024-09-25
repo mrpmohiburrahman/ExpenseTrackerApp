@@ -31,6 +31,7 @@ const RegisterScreen: React.FC = () => {
     setLoading(true);
     try {
       await signUp(email, password);
+
       // Navigation is handled by auth state change
     } catch (error: any) {
       Alert.alert('Registration Error', error.message);

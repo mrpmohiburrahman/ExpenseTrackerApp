@@ -3,18 +3,16 @@ import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, R
 import mmkvStorage from './mmkvStorage';
 import expenseReducer from './slices/expenseSlice';
 import incomeReducer from './slices/incomeSlice';
-import authReducer from './slices/authSlice';
 
 const rootReducer = combineReducers({
   income: incomeReducer,
   expense: expenseReducer,
-  auth: authReducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage: mmkvStorage,
-  whitelist: ['income', 'expense', 'auth'],
+  whitelist: ['income', 'expense'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

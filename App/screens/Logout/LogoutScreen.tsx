@@ -1,23 +1,19 @@
 // App/screens/Logout/LogoutScreen.tsx
 
 import React, { useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-// import { logoutUser } from '@redux/slices/authSlice'; // Assuming you have an auth slice
 import { useNavigation } from '@react-navigation/native';
-import { logoutUser } from '@store/slices/authSlice';
+import { useAuth } from 'App/context/AuthContext';
 
 const LogoutScreen: React.FC = () => {
+  const { signOut } = useAuth();
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   useEffect(() => {
     const performLogout = async () => {
-    //   await dispatch(logoutUser()).unwrap();
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'AuthStack' }],
-      });
+      await signOut();
     };
 
     performLogout();
