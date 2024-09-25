@@ -3,6 +3,7 @@
 import { deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
 import { RootState } from '@store/store';
 import React, { useState, useEffect, useMemo } from 'react';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   View,
   Text,
@@ -15,6 +16,7 @@ import {
   Alert,
   Platform,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
@@ -41,6 +43,13 @@ const ExpenseListScreen: React.FC = () => {
   const [appliedMonth, setAppliedMonth] = useState<string>(moment().format('YYYY-MM'));
   const [filteredExpenses, setFilteredExpenses] = useState<ExpenseItem[]>([]);
 
+  // States for Add Income Modal
+  const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
+  const [newName, setNewName] = useState<string>('');
+  const [newDate, setNewDate] = useState<string>(moment().format('YYYY-MM-DD'));
+  const [newAmount, setNewAmount] = useState<string>('');
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+
   useEffect(() => {
     applyFilter();
   }, [expenses, appliedMonth]);
@@ -66,6 +75,12 @@ const ExpenseListScreen: React.FC = () => {
         return;
       }
 
+      // Validate amount
+      const amountNumber = parseFloat(newAmount);
+      if (isNaN(amountNumber) || amountNumber <= 0) {
+        Alert.alert('Error', 'Please enter a valid amount.');
+        return;
+      }
       dispatch(
         editExpense({
           id: selectedExpense.id,
@@ -76,6 +91,12 @@ const ExpenseListScreen: React.FC = () => {
       );
       setModalVisible(false);
       setSelectedExpense(null);
+      // Reset the form and close the modal
+      setNewName('');
+      setNewDate(moment().format('YYYY-MM-DD'));
+      setNewAmount('');
+      setAddModalVisible(false);
+      setShowDatePicker(false);
     }
   };
 
@@ -185,6 +206,7 @@ const ExpenseListScreen: React.FC = () => {
         }}
         addButtonTitle="+Add Expense"
         onAddPress={() => {
+          setAddModalVisible(true);
           // Handle add income press
         }}
       />
@@ -242,7 +264,56 @@ const ExpenseListScreen: React.FC = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+      {/* Modal for Adding Income */}
+      <Modal
+        visible={addModalVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => {
+          setAddModalVisible(false);
+          setShowDatePicker(false);
+        }}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalBackdrop}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Add Income</Text>
+            <TextInput placeholder="Income Name" value={newName} onChangeText={setNewName} style={styles.input} />
 
+            <TextInput
+              placeholder="Amount"
+              value={newAmount}
+              onChangeText={setNewAmount}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
+              <Text>{newDate}</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={new Date(newDate)}
+                mode="date"
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false);
+                  if (selectedDate) {
+                    setNewDate(moment(selectedDate).format('YYYY-MM-DD'));
+                  }
+                }}
+              />
+            )}
+            <View style={styles.modalButtonContainer}>
+              <Button title="Add" onPress={handleSave} />
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setAddModalVisible(false);
+                  setShowDatePicker(false);
+                }}
+              />
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
       {/* Modal for Month Filtering */}
       <Modal
         visible={filterModalVisible}
@@ -361,6 +432,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 8,
     borderRadius: 4,
+  },
+  dateInput: {
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    justifyContent: 'center',
   },
   modalButtonContainer: {
     marginTop: 10,

@@ -1,6 +1,6 @@
 // App/screens/IncomeListScreen.tsx
 
-import { deleteIncome, editIncome, IncomeItem } from '@store/slices/incomeSlice';
+import { deleteIncome, editIncome, addIncome, IncomeItem } from '@store/slices/incomeSlice';
 import { RootState } from '@store/store';
 import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
 import React, { useState, useEffect, useMemo } from 'react';
@@ -15,12 +15,14 @@ import {
   TextInput,
   Alert,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
 import moment from 'moment'; // Ensure moment is installed
 import { PieChart } from 'react-native-gifted-charts';
 import HeaderWithActions from '@components/HeaderWithActions';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -37,6 +39,13 @@ const IncomeListScreen: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('YYYY-MM'));
   const [appliedMonth, setAppliedMonth] = useState<string>(moment().format('YYYY-MM'));
   const [filteredIncomes, setFilteredIncomes] = useState<IncomeItem[]>([]);
+
+  // States for Add Income Modal
+  const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
+  const [newName, setNewName] = useState<string>('');
+  const [newDate, setNewDate] = useState<string>(moment().format('YYYY-MM-DD'));
+  const [newAmount, setNewAmount] = useState<string>('');
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   useEffect(() => {
     applyFilter();
@@ -63,12 +72,19 @@ const IncomeListScreen: React.FC = () => {
         return;
       }
 
+      // Validate amount
+      const amountNumber = parseFloat(editedAmount);
+      if (isNaN(amountNumber) || amountNumber <= 0) {
+        Alert.alert('Error', 'Please enter a valid amount.');
+        return;
+      }
+
       dispatch(
         editIncome({
           id: selectedIncome.id,
           name: editedName,
           date: editedDate,
-          amount: parseFloat(editedAmount),
+          amount: amountNumber,
         })
       );
       setModalVisible(false);
@@ -82,6 +98,37 @@ const IncomeListScreen: React.FC = () => {
       setModalVisible(false);
       setSelectedIncome(null);
     }
+  };
+
+  // Handle Add Income
+  const handleAddIncome = () => {
+    if (!newName || !newDate || !newAmount) {
+      Alert.alert('Error', 'Please fill all fields.');
+      return;
+    }
+
+    // Validate date format
+    if (!moment(newDate, 'YYYY-MM-DD', true).isValid()) {
+      Alert.alert('Error', 'Date must be in YYYY-MM-DD format.');
+      return;
+    }
+
+    // Validate amount
+    const amountNumber = parseFloat(newAmount);
+    if (isNaN(amountNumber) || amountNumber <= 0) {
+      Alert.alert('Error', 'Please enter a valid amount.');
+      return;
+    }
+
+    // Dispatch the addIncome action
+    dispatch(addIncome(newName, newDate, amountNumber));
+
+    // Reset the form and close the modal
+    setNewName('');
+    setNewDate(moment().format('YYYY-MM-DD'));
+    setNewAmount('');
+    setAddModalVisible(false);
+    setShowDatePicker(false);
   };
 
   // Function to apply month filter based on appliedMonth
@@ -176,7 +223,7 @@ const IncomeListScreen: React.FC = () => {
         }}
         addButtonTitle="+Add Income"
         onAddPress={() => {
-          // Handle add income press
+          setAddModalVisible(true);
         }}
       />
 
@@ -222,6 +269,57 @@ const IncomeListScreen: React.FC = () => {
             </View>
           </View>
         </View>
+      </Modal>
+
+      {/* Modal for Adding Income */}
+      <Modal
+        visible={addModalVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => {
+          setAddModalVisible(false);
+          setShowDatePicker(false);
+        }}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalBackdrop}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Add Income</Text>
+            <TextInput placeholder="Income Name" value={newName} onChangeText={setNewName} style={styles.input} />
+
+            <TextInput
+              placeholder="Amount"
+              value={newAmount}
+              onChangeText={setNewAmount}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
+              <Text>{newDate}</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={new Date(newDate)}
+                mode="date"
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false);
+                  if (selectedDate) {
+                    setNewDate(moment(selectedDate).format('YYYY-MM-DD'));
+                  }
+                }}
+              />
+            )}
+            <View style={styles.modalButtonContainer}>
+              <Button title="Add" onPress={handleAddIncome} />
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setAddModalVisible(false);
+                  setShowDatePicker(false);
+                }}
+              />
+            </View>
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* Modal for Month Filtering */}
@@ -330,6 +428,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 8,
     borderRadius: 4,
+  },
+  dateInput: {
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    justifyContent: 'center',
   },
   modalButtonContainer: {
     marginTop: 10,
