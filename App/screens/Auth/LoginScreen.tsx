@@ -6,6 +6,9 @@ import { View, TextInput, Button, Text, ActivityIndicator, Alert, StyleSheet } f
 import { useAuth } from '../../context/AuthContext';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
+import VectorIcon from '@utils/VectorIcons';
+// import VectorIcon from 'App/utils/VectorIcons';
+// import VectorIcon from '@utils/VectorIcons';
 
 type AuthStackParamList = {
   Login: undefined;
@@ -43,6 +46,7 @@ const LoginScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <VectorIcon.SimpleLineIcons name="arrow-right" size={15} />
       <Text style={styles.title}>Login</Text>
       <TextInput
         placeholder="Email"
