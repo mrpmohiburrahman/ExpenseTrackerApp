@@ -1,6 +1,3 @@
-
-// redux/slices/incomeSlice.ts
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import uuid from 'react-native-uuid';
 
@@ -10,6 +7,7 @@ export interface IncomeItem {
   name: string;
   date: string; // ISO formatted date string
   amount: number;
+  type?: 'income'; // Added "type" field to define whether it's an expense or income
 }
 
 // Define the initial state structure
@@ -21,7 +19,6 @@ interface IncomeState {
 const initialState: IncomeState = {
   incomes: [],
 };
-// redux/slices/incomeSlice.ts
 
 const incomeSlice = createSlice({
   name: 'income',
@@ -39,24 +36,29 @@ const incomeSlice = createSlice({
             name,
             date,
             amount,
+            type: 'income', // Automatically set type to "income"
           } as IncomeItem,
         };
       },
     },
     // Action to edit an existing income
     editIncome: (state, action: PayloadAction<IncomeItem>) => {
-      const index = state.incomes.findIndex((income) => income.id === action.payload.id);
+      const index = state.incomes.findIndex(income => income.id === action.payload.id);
       if (index !== -1) {
         state.incomes[index] = action.payload;
       }
     },
     // Action to delete an income by ID
     deleteIncome: (state, action: PayloadAction<string>) => {
-      state.incomes = state.incomes.filter((income) => income.id !== action.payload);
+      state.incomes = state.incomes.filter(income => income.id !== action.payload);
+    },
+    // Action to clear all incomes
+    clearIncomes: state => {
+      state.incomes = []; // Reset incomes array to empty
     },
   },
 });
 
 // Export actions and reducer
-export const { addIncome, editIncome, deleteIncome } = incomeSlice.actions;
+export const { addIncome, editIncome, deleteIncome, clearIncomes } = incomeSlice.actions;
 export default incomeSlice.reducer;

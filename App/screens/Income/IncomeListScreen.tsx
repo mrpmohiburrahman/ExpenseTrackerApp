@@ -1,38 +1,34 @@
 // App/screens/IncomeListScreen.tsx
 
-import { deleteIncome, editIncome, addIncome, IncomeItem } from '@store/slices/incomeSlice';
-import { RootState } from '@store/store';
-import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
-import React, { useState, useEffect, useMemo } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Button,
-  TextInput,
-  Alert,
-  Platform,
-  KeyboardAvoidingView,
-} from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
-import moment from 'moment'; // Ensure moment is installed
-import { PieChart } from 'react-native-gifted-charts';
 import HeaderWithActions from '@components/HeaderWithActions';
+import TransactionList, { TransactionItem } from '@components/TransactionList';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Colors } from 'App/constants/Colors';
-import { moderateScale } from 'react-native-size-matters';
-import TransactionList from '@components/TransactionList';
+import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
+import { addIncome, deleteIncome, editIncome } from '@store/slices/incomeSlice';
+import { RootState } from '@store/store';
+import moment from 'moment'; // Ensure moment is installed
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Alert,
+  Button,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { PieChart } from 'react-native-gifted-charts';
+import { useDispatch, useSelector } from 'react-redux';
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
   const incomes = useSelector((state: RootState) => state.income.incomes);
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [selectedIncome, setSelectedIncome] = useState<IncomeItem | null>(null);
+  const [selectedIncome, setSelectedIncome] = useState<TransactionItem | null>(null);
   const [editedName, setEditedName] = useState<string>('');
   const [editedDate, setEditedDate] = useState<string>('');
   const [editedAmount, setEditedAmount] = useState<string>('');
@@ -41,7 +37,7 @@ const IncomeListScreen: React.FC = () => {
   const [filterModalVisible, setFilterModalVisible] = useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('YYYY-MM'));
   const [appliedMonth, setAppliedMonth] = useState<string>(moment().format('YYYY-MM'));
-  const [filteredIncomes, setFilteredIncomes] = useState<IncomeItem[]>([]);
+  const [filteredIncomes, setFilteredIncomes] = useState<TransactionItem[]>([]);
 
   // States for Add Income Modal
   const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
@@ -54,7 +50,7 @@ const IncomeListScreen: React.FC = () => {
     applyFilter();
   }, [incomes, appliedMonth]);
 
-  const openModal = (income: IncomeItem) => {
+  const openModal = (income: TransactionItem) => {
     setSelectedIncome(income);
     setEditedName(income.name);
     setEditedDate(income.date);
@@ -144,9 +140,9 @@ const IncomeListScreen: React.FC = () => {
           incomeDate.year() === year && incomeDate.month() + 1 === month // month is 0-indexed in moment
         );
       });
-      setFilteredIncomes(filtered);
+      setFilteredIncomes(filtered as TransactionItem[]);
     } else {
-      setFilteredIncomes(incomes);
+      setFilteredIncomes(incomes as TransactionItem[]);
     }
   };
 
@@ -204,9 +200,17 @@ const IncomeListScreen: React.FC = () => {
       };
     });
   }, [filteredIncomes]);
-
   return (
     <View style={styles.container}>
+      {/* <Button
+        title="cleare income and expnse"
+        onPress={() => {
+          dispatch(clearIncomes());
+          dispatch(clearExpenses());
+          addRandomIncomes();
+          addRandomExpenses();
+        }}
+      /> */}
       <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
         <PieChart
           showText

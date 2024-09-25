@@ -1,6 +1,3 @@
-
-// redux/slices/expenseSlice.ts
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import uuid from 'react-native-uuid';
 
@@ -10,6 +7,7 @@ export interface ExpenseItem {
   name: string;
   date: string; // ISO formatted date string
   amount: number;
+  type?: 'expense'; // Added "type" field to define whether it's an expense or income
 }
 
 // Define the initial state structure
@@ -21,7 +19,6 @@ interface ExpenseState {
 const initialState: ExpenseState = {
   expenses: [],
 };
-// redux/slices/expenseSlice.ts
 
 const expenseSlice = createSlice({
   name: 'expense',
@@ -39,24 +36,29 @@ const expenseSlice = createSlice({
             name,
             date,
             amount,
+            type: 'expense', // Automatically set type to "expense"
           } as ExpenseItem,
         };
       },
     },
     // Action to edit an existing expense
     editExpense: (state, action: PayloadAction<ExpenseItem>) => {
-      const index = state.expenses.findIndex((expense) => expense.id === action.payload.id);
+      const index = state.expenses.findIndex(expense => expense.id === action.payload.id);
       if (index !== -1) {
         state.expenses[index] = action.payload;
       }
     },
     // Action to delete an expense by ID
     deleteExpense: (state, action: PayloadAction<string>) => {
-      state.expenses = state.expenses.filter((expense) => expense.id !== action.payload);
+      state.expenses = state.expenses.filter(expense => expense.id !== action.payload);
+    },
+    // Action to clear all expenses
+    clearExpenses: state => {
+      state.expenses = []; // Reset expenses array to empty
     },
   },
 });
 
 // Export actions and reducer
-export const { addExpense, editExpense, deleteExpense } = expenseSlice.actions;
+export const { addExpense, editExpense, deleteExpense, clearExpenses } = expenseSlice.actions;
 export default expenseSlice.reducer;

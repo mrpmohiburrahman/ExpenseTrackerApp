@@ -26,7 +26,7 @@ import { Colors } from 'App/constants/Colors';
 import VectorIcon from '@utils/VectorIcons';
 import { moderateScale } from 'react-native-size-matters';
 import HeaderWithActions from '@components/HeaderWithActions';
-import TransactionList from '@components/TransactionList';
+import TransactionList, { TransactionItem } from '@components/TransactionList';
 
 const ExpenseListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const ExpenseListScreen: React.FC = () => {
   const [filterModalVisible, setFilterModalVisible] = useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('YYYY-MM'));
   const [appliedMonth, setAppliedMonth] = useState<string>(moment().format('YYYY-MM'));
-  const [filteredExpenses, setFilteredExpenses] = useState<ExpenseItem[]>([]);
+  const [filteredExpenses, setFilteredExpenses] = useState<TransactionItem[]>([]);
 
   // States for Add Income Modal
   const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
@@ -119,9 +119,9 @@ const ExpenseListScreen: React.FC = () => {
           expenseDate.year() === year && expenseDate.month() + 1 === month // month is 0-indexed in moment
         );
       });
-      setFilteredExpenses(filtered);
+      setFilteredExpenses(filtered as TransactionItem[]);
     } else {
-      setFilteredExpenses(expenses);
+      setFilteredExpenses(expenses as TransactionItem[]);
     }
   };
 
