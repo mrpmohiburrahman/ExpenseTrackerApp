@@ -3,9 +3,22 @@
 import { deleteIncome, editIncome, IncomeItem } from '@store/slices/incomeSlice';
 import { RootState } from '@store/store';
 import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
-import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal, Button, TextInput, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  Button,
+  TextInput,
+  Alert,
+  Platform,
+} from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
+import moment from 'moment'; // Ensure moment is installed
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -16,6 +29,16 @@ const IncomeListScreen: React.FC = () => {
   const [editedName, setEditedName] = useState<string>('');
   const [editedDate, setEditedDate] = useState<string>('');
   const [editedAmount, setEditedAmount] = useState<string>('');
+
+  // New states for month filtering
+  const [filterModalVisible, setFilterModalVisible] = useState<boolean>(false);
+  const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('YYYY-MM'));
+  const [appliedMonth, setAppliedMonth] = useState<string>(moment().format('YYYY-MM'));
+  const [filteredIncomes, setFilteredIncomes] = useState<IncomeItem[]>([]);
+
+  useEffect(() => {
+    applyFilter();
+  }, [incomes, appliedMonth]);
 
   const openModal = (income: IncomeItem) => {
     setSelectedIncome(income);
@@ -29,6 +52,12 @@ const IncomeListScreen: React.FC = () => {
     if (selectedIncome) {
       if (!editedName || !editedDate || !editedAmount) {
         Alert.alert('Error', 'Please fill all fields.');
+        return;
+      }
+
+      // Validate date format
+      if (!moment(editedDate, 'YYYY-MM-DD', true).isValid()) {
+        Alert.alert('Error', 'Date must be in YYYY-MM-DD format.');
         return;
       }
 
@@ -53,48 +82,114 @@ const IncomeListScreen: React.FC = () => {
     }
   };
 
+  // Function to apply month filter based on appliedMonth
+  const applyFilter = () => {
+    if (appliedMonth) {
+      const [year, month] = appliedMonth.split('-').map(Number);
+      const filtered = incomes.filter(income => {
+        const incomeDate = moment(income.date, 'YYYY-MM-DD');
+        return (
+          incomeDate.year() === year && incomeDate.month() + 1 === month // month is 0-indexed in moment
+        );
+      });
+      setFilteredIncomes(filtered);
+    } else {
+      setFilteredIncomes(incomes);
+    }
+  };
+
+  // Generate list of months from current to previous 12 months
+  const generateMonthOptions = () => {
+    const months = [];
+    const current = moment();
+    for (let i = 0; i < 12; i++) {
+      months.push(current.clone().subtract(i, 'months').format('YYYY-MM'));
+    }
+    return months;
+  };
+
+  // Handle Apply in filter modal
+  const handleApplyFilter = () => {
+    setAppliedMonth(selectedMonth);
+    setFilterModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
-      {/* <Button
-        title="randome income"
-        onPress={() => {
-          console.log('🚀 ~ addRandomIncomes:root');
-          addRandomIncomes();
-        }}
-      /> */}
+      {/* Header with Filter Button */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedMonth(appliedMonth); // Initialize picker with current filter
+            setFilterModalVisible(true);
+          }}
+          style={styles.filterButton}>
+          <Text style={styles.filterButtonText}>Filter</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Income List</Text>
+        {/* Placeholder for alignment */}
+        <View style={{ width: 60 }} />
+      </View>
+
       <FlatList
-        data={incomes}
+        data={filteredIncomes}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => openModal(item)} style={styles.item}>
             <Text style={styles.itemText}>{item.name}</Text>
-            <Text>{item.amount}</Text>
+            <Text>${item.amount.toFixed(2)}</Text>
             <Text>{item.date}</Text>
           </TouchableOpacity>
         )}
       />
 
       {/* Modal for Editing/Deleting Income */}
-      <Modal visible={modalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Edit Income</Text>
-          <TextInput placeholder="Income Name" value={editedName} onChangeText={setEditedName} style={styles.input} />
-          <TextInput
-            placeholder="Date (YYYY-MM-DD)"
-            value={editedDate}
-            onChangeText={setEditedDate}
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Amount"
-            value={editedAmount}
-            onChangeText={setEditedAmount}
-            keyboardType="numeric"
-            style={styles.input}
-          />
-          <Button title="Save" onPress={handleSave} />
-          <Button title="Delete" color="red" onPress={handleDelete} />
-          <Button title="Cancel" onPress={() => setModalVisible(false)} />
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Edit Income</Text>
+            <TextInput placeholder="Income Name" value={editedName} onChangeText={setEditedName} style={styles.input} />
+            <TextInput
+              placeholder="Date (YYYY-MM-DD)"
+              value={editedDate}
+              onChangeText={setEditedDate}
+              style={styles.input}
+            />
+            <TextInput
+              placeholder="Amount"
+              value={editedAmount}
+              onChangeText={setEditedAmount}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+            <View style={styles.modalButtonContainer}>
+              <Button title="Save" onPress={handleSave} />
+              <Button title="Delete" color="red" onPress={handleDelete} />
+              <Button title="Cancel" onPress={() => setModalVisible(false)} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal for Month Filtering */}
+      <Modal visible={filterModalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.filterModalContainer}>
+            <Text style={styles.modalTitle}>Select Month</Text>
+            <Picker
+              selectedValue={selectedMonth}
+              onValueChange={itemValue => setSelectedMonth(itemValue)}
+              style={styles.picker}
+              mode="dropdown">
+              {generateMonthOptions().map(month => (
+                <Picker.Item key={month} label={moment(month, 'YYYY-MM').format('MMMM YYYY')} value={month} />
+              ))}
+            </Picker>
+            <View style={styles.modalButtonContainer}>
+              <Button title="Apply" onPress={handleApplyFilter} />
+              <Button title="Cancel" onPress={() => setFilterModalVisible(false)} />
+            </View>
+          </View>
         </View>
       </Modal>
     </View>
@@ -108,6 +203,27 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  filterButton: {
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 5,
+    width: 60,
+    alignItems: 'center',
+  },
+  filterButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   item: {
     padding: 12,
     borderBottomColor: '#ccc',
@@ -117,10 +233,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  modalContainer: {
+  modalBackdrop: {
     flex: 1,
-    padding: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '90%',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+  },
+  filterModalContainer: {
+    width: '90%',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
   },
   modalTitle: {
     fontSize: 22,
@@ -134,5 +263,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 8,
     borderRadius: 4,
+  },
+  modalButtonContainer: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  picker: {
+    height: Platform.OS === 'ios' ? 200 : 50,
+    width: '100%',
   },
 });
