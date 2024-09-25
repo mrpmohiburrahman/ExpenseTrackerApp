@@ -1,14 +1,12 @@
-// App/navigation/BottomTabNavigator.tsx
-
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import VectorIcon from '@utils/VectorIcons'; // Adjust the path as needed
+import VectorIcon from '@utils/VectorIcons';
 import DashboardScreen from '@screens/Dashboard/DashboardScreen';
 import IncomeListScreen from '@screens/Income/IncomeListScreen';
 import ExpenseListScreen from '@screens/Expense/ExpenseListScreen';
 import GoalsScreen from '@screens/Goals/GoalsScreen';
 import LogoutScreen from '@screens/Logout/LogoutScreen';
-import ProfileButton from '@components/ProfileButton'; // The custom header button
+import ProfileButton from '@components/ProfileButton';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,16 +21,34 @@ const BottomTabNavigator: React.FC = () => {
 
           switch (route.name) {
             case 'Dashboard':
-              iconName = focused ? 'home' : 'home-outline';
+              return (
+                <VectorIcon.MaterialCommunityIcons
+                  name={focused ? 'view-dashboard' : 'view-dashboard-outline'}
+                  size={size}
+                  color={color}
+                />
+              );
               break;
             case 'Income':
-              iconName = focused ? 'arrow-down-circle' : 'arrow-down-circle-outline';
+              return <VectorIcon.Ionicons name={focused ? 'wallet' : 'wallet-outline'} size={size} color={color} />;
               break;
             case 'Expense':
-              iconName = focused ? 'arrow-up-circle' : 'arrow-up-circle-outline';
+              return (
+                <VectorIcon.MaterialCommunityIcons
+                  name={focused ? 'chart-areaspline-variant' : 'chart-areaspline'}
+                  size={size}
+                  color={color}
+                />
+              );
               break;
             case 'Goals':
-              iconName = focused ? 'flag' : 'flag-outline';
+              return (
+                <VectorIcon.MaterialCommunityIcons
+                  name={focused ? 'bullseye-arrow' : 'bullseye-arrow'}
+                  size={size}
+                  color={color}
+                />
+              );
               break;
             case 'Logout':
               iconName = focused ? 'log-out' : 'log-out-outline';
@@ -43,8 +59,8 @@ const BottomTabNavigator: React.FC = () => {
 
           return <VectorIcon.Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#6200ee',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: '##485B42',
+        tabBarInactiveTintColor: '#707070',
       })}>
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Income" component={IncomeListScreen} />
@@ -55,7 +71,6 @@ const BottomTabNavigator: React.FC = () => {
   );
 };
 
-// Helper function to set header titles
 const getHeaderTitle = (routeName: string) => {
   switch (routeName) {
     case 'Dashboard':
