@@ -144,7 +144,11 @@ const IncomeListScreen: React.FC = () => {
       />
 
       {/* Modal for Editing/Deleting Income */}
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+      <Modal
+        visible={modalVisible}
+        animationType="fade" // Changed from 'slide' to 'fade'
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalBackdrop}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Edit Income</Text>
@@ -172,7 +176,11 @@ const IncomeListScreen: React.FC = () => {
       </Modal>
 
       {/* Modal for Month Filtering */}
-      <Modal visible={filterModalVisible} animationType="slide" transparent={true}>
+      <Modal
+        visible={filterModalVisible}
+        animationType="fade" // Changed from 'slide' to 'fade'
+        transparent={true}
+        onRequestClose={() => setFilterModalVisible(false)}>
         <View style={styles.modalBackdrop}>
           <View style={styles.filterModalContainer}>
             <Text style={styles.modalTitle}>Select Month</Text>
@@ -235,7 +243,7 @@ const styles = StyleSheet.create({
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -244,12 +252,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 8,
+    elevation: 5, // Adds shadow for Android
+    shadowColor: '#000', // Adds shadow for iOS
+    shadowOffset: { width: 0, height: 2 }, // Adds shadow for iOS
+    shadowOpacity: 0.25, // Adds shadow for iOS
+    shadowRadius: 4, // Adds shadow for iOS
   },
   filterModalContainer: {
     width: '90%',
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 8,
+    elevation: 5, // Adds shadow for Android
+    shadowColor: '#000', // Adds shadow for iOS
+    shadowOffset: { width: 0, height: 2 }, // Adds shadow for iOS
+    shadowOpacity: 0.25, // Adds shadow for iOS
+    shadowRadius: 4, // Adds shadow for iOS
   },
   modalTitle: {
     fontSize: 22,
