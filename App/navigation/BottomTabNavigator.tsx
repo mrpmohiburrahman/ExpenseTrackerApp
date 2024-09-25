@@ -1,4 +1,7 @@
+// App/navigation/BottomTabNavigator.tsx
+
 import React from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import VectorIcon from '@utils/VectorIcons';
 import DashboardScreen from '@screens/Dashboard/DashboardScreen';
@@ -7,6 +10,7 @@ import ExpenseListScreen from '@screens/Expense/ExpenseListScreen';
 import GoalsScreen from '@screens/Goals/GoalsScreen';
 import LogoutScreen from '@screens/Logout/LogoutScreen';
 import ProfileButton from '@components/ProfileButton';
+import NotificationButton from '@components/NotificationButton'; // New Component
 
 const Tab = createBottomTabNavigator();
 
@@ -14,11 +18,27 @@ const BottomTabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        // Align the header title to the left
         headerTitle: getHeaderTitle(route.name),
-        headerRight: () => <ProfileButton />,
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string;
+        headerTitleAlign: 'left',
 
+        headerStyle: {
+          height: 130,
+        },
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+
+        // Add both Notification and Profile buttons to the header right
+        headerRight: () => (
+          <View style={styles.headerRightContainer}>
+            <NotificationButton />
+            <ProfileButton />
+          </View>
+        ),
+
+        // Define the tab bar icons based on the route name
+        tabBarIcon: ({ focused, color, size }) => {
           switch (route.name) {
             case 'Dashboard':
               return (
@@ -28,10 +48,8 @@ const BottomTabNavigator: React.FC = () => {
                   color={color}
                 />
               );
-              break;
             case 'Income':
               return <VectorIcon.Ionicons name={focused ? 'wallet' : 'wallet-outline'} size={size} color={color} />;
-              break;
             case 'Expense':
               return (
                 <VectorIcon.MaterialCommunityIcons
@@ -40,26 +58,23 @@ const BottomTabNavigator: React.FC = () => {
                   color={color}
                 />
               );
-              break;
             case 'Goals':
               return (
                 <VectorIcon.MaterialCommunityIcons
-                  name={focused ? 'bullseye-arrow' : 'bullseye-arrow'}
+                  name={focused ? 'bullseye-arrow' : 'bullseye-arrow-outline'}
                   size={size}
                   color={color}
                 />
               );
-              break;
             case 'Logout':
-              iconName = focused ? 'log-out' : 'log-out-outline';
-              break;
+              return <VectorIcon.Ionicons name={focused ? 'log-out' : 'log-out-outline'} size={size} color={color} />;
             default:
-              iconName = 'ellipse';
+              return <VectorIcon.Ionicons name="ellipse" size={size} color={color} />;
           }
-
-          return <VectorIcon.Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '##485B42',
+
+        // Corrected color code
+        tabBarActiveTintColor: '#485B42',
         tabBarInactiveTintColor: '#707070',
       })}>
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
@@ -71,6 +86,7 @@ const BottomTabNavigator: React.FC = () => {
   );
 };
 
+// Function to get the header title based on the route name
 const getHeaderTitle = (routeName: string) => {
   switch (routeName) {
     case 'Dashboard':
@@ -87,5 +103,14 @@ const getHeaderTitle = (routeName: string) => {
       return '';
   }
 };
+
+// Styles for the header right container and other styles
+const styles = StyleSheet.create({
+  headerRightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 16, // Adjust as needed for spacing
+  },
+});
 
 export default BottomTabNavigator;
