@@ -7,9 +7,6 @@ import { Bar, CartesianChart, Line, useChartPressState } from 'victory-native';
 export default function GettingStartedScreen(props: { segment: string }) {
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
 
-  const [roundedCorner, setRoundedCorner] = React.useState(5);
-  const [innerPadding, setInnerPadding] = React.useState(0.33);
-
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
@@ -31,10 +28,10 @@ export default function GettingStartedScreen(props: { segment: string }) {
                 points={points.highTmp}
                 chartBounds={chartBounds}
                 animate={{ type: 'spring' }}
-                innerPadding={innerPadding}
+                innerPadding={0.33}
                 roundedCorners={{
-                  topLeft: roundedCorner,
-                  topRight: roundedCorner,
+                  topLeft: 5,
+                  topRight: 5,
                 }}>
                 <LinearGradient start={vec(0, 0)} end={vec(0, 400)} colors={['#efe9de', '#efe9de']} />
               </Bar>
