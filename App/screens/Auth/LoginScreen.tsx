@@ -15,6 +15,7 @@ import Or from '@components/Or';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { TouchableOpacity } from 'react-native';
 import { IconButton, TextInput } from 'react-native-paper';
+import AuthHeader from '@components/AuthHeader';
 // import VectorIcon from 'App/utils/VectorIcons';
 // import VectorIcon from '@utils/VectorIcons';
 
@@ -64,29 +65,7 @@ const LoginScreen: React.FC = () => {
           borderColor: 'red',
         }}>
         {/* Header */}
-        <View style={{ alignItems: 'center', gap: 20, paddingBottom: 50 }}>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <Text style={{ color: Colors.primary, fontSize: 33 }}>Expense</Text>
-            <Text style={{ color: Colors.secondary, fontSize: 33 }}>Tracker</Text>
-          </View>
-          <Text
-            style={{
-              color: Colors.text,
-              fontSize: 26,
-              fontWeight: '600',
-            }}>
-            Sign In Your Account!
-          </Text>
-          <Text
-            style={{
-              color: Colors.signinSub,
-              fontSize: 14,
-              width: SCREEN_WIDTH * 0.6,
-              textAlign: 'center',
-            }}>
-            It's not too late; let's embark on your journey to a rich life.
-          </Text>
-        </View>
+        <AuthHeader />
         <View style={{ gap: 10 }}>
           <TouchableOpacity
             onPress={async () => {
