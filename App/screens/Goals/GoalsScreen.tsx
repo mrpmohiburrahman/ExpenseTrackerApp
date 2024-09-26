@@ -1,98 +1,65 @@
+import { Circle, LinearGradient, vec } from '@shopify/react-native-skia';
 import * as React from 'react';
-import { View, Dimensions, Text } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import LineChart from 'react-native-simple-line-chart';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+import type { SharedValue } from 'react-native-reanimated';
+import { Bar, CartesianChart, Line, useChartPressState } from 'victory-native';
 
-export default function App() {
-  const data = [
-    {
-      y: 10,
-      x: new Date('2020-01-01').getTime(),
-      extraData: {
-        formattedValue: '0',
-        formattedTime: '2020-01-01',
-      },
-    },
-    {
-      y: 20,
-      x: new Date('2020-01-02').getTime(),
-      extraData: {
-        formattedValue: '20',
-        formattedTime: '2020-01-02',
-      },
-    },
-    {
-      y: 15,
-      x: new Date('2020-01-03').getTime(),
-      extraData: {
-        date: new Date('2020-01-03').getTime(),
-        formattedValue: '15$',
-        formattedTime: '2020-01-03',
-      },
-    },
-    {
-      y: 35,
-      x: new Date('2020-01-04').getTime(),
-      extraData: {
-        formattedValue: '35$',
-        formattedTime: '2020-01-04',
-      },
-    },
-    {
-      y: 5,
-      x: new Date('2020-01-06').getTime(),
-      extraData: {
-        formattedValue: '35$',
-        formattedTime: '2020-01-04',
-      },
-    },
-  ];
+export default function GettingStartedScreen(props: { segment: string }) {
+  const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
+
+  const [roundedCorner, setRoundedCorner] = React.useState(5);
+  const [innerPadding, setInnerPadding] = React.useState(0.33);
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <LineChart
-          extraConfig={{
-            alwaysShowActivePoint: false,
-            initialActivePoint: 0,
-          }}
-          lines={[
-            {
-              data,
-              activePointConfig: {
-                color: 'black',
-                showVerticalLine: true,
-                verticalLineWidth: 48,
-              },
-
-              lineColor: 'red',
-              lineWidth: 2,
-              curve: 'monotone',
-
-              endPointConfig: {
-                color: 'red',
-                radius: 10,
-                animated: true,
-              },
-              activePointComponent: point => {
-                return (
-                  <View
-                    style={{
-                      backgroundColor: 'pink',
-                      padding: 10,
-                      borderRadius: 10,
-                    }}>
-                    <Text style={{ color: 'white' }}>{point?.extraData?.formattedValue}</Text>
-                    <Text style={{ color: 'white' }}>{point?.extraData?.formattedTime}</Text>
-                  </View>
-                );
-              },
+    <SafeAreaView style={styles.safeView}>
+      <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
+        <CartesianChart
+          data={DATA}
+          xKey="day"
+          yKeys={['highTmp']}
+          xAxis={{
+            formatXLabel: value => {
+              return `${value}`;
             },
-          ]}
-          backgroundColor={undefined}
-          height={200}
-          width={Dimensions.get('screen').width}
-        />
+            lineWidth: 0,
+          }}
+          yAxis={[{ lineWidth: 0 }]}
+          chartPressState={state}>
+          {({ points, chartBounds }) => (
+            <>
+              <Bar
+                points={points.highTmp}
+                chartBounds={chartBounds}
+                animate={{ type: 'spring' }}
+                innerPadding={innerPadding}
+                roundedCorners={{
+                  topLeft: roundedCorner,
+                  topRight: roundedCorner,
+                }}>
+                <LinearGradient start={vec(0, 0)} end={vec(0, 400)} colors={['#efe9de', '#efe9de']} />
+              </Bar>
+              <Line curveType="cardinal" points={points.highTmp} color="#cea868" strokeWidth={3} connectMissingData />
+              {isActive && <ToolTip x={state.x.position} y={state.y.highTmp.position} />}
+            </>
+          )}
+        </CartesianChart>
       </View>
-    </GestureHandlerRootView>
+    </SafeAreaView>
   );
 }
+
+function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
+  return <Circle cx={x} cy={y} r={8} color="black" />;
+}
+
+const DATA = Array.from({ length: 5 }, (_, i) => ({
+  day: i,
+  highTmp: 5 + 30 * Math.random(),
+}));
+
+const styles = StyleSheet.create({
+  safeView: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+});

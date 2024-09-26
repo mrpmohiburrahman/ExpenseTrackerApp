@@ -17,6 +17,7 @@ const Tab = createBottomTabNavigator();
 const BottomTabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
+      initialRouteName="Goals"
       screenOptions={({ route }) => ({
         // Align the header title to the left
         headerTitle: getHeaderTitle(route.name),
