@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 interface AuthContextProps {
   user: FirebaseAuthTypes.User | null;
@@ -9,6 +10,7 @@ interface AuthContextProps {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  googleSignin: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -17,7 +19,10 @@ const AuthContext = createContext<AuthContextProps>({
   signUp: async () => {},
   signIn: async () => {},
   signOut: async () => {},
+  googleSignin: async () => {},
 });
+
+export const GOOGLE_CLIENT_ID = '1036316123714-3b6b5kgpdtcaq840jfp0joen21uta10u.apps.googleusercontent.com';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
@@ -34,6 +39,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return subscriber; // unsubscribe on unmount
   }, []);
 
+  const googleSignin = async () => {
+    try {
+      const isGoogleServices = await GoogleSignin.hasPlayServices();
+      console.log('🚀 ~ googleSignin ~ isGoogleServices:', isGoogleServices);
+      const signInData = await GoogleSignin.signIn();
+      console.log('🚀 ~ googleSignin ~ signInData:', signInData);
+      console.log('🚀 ~ googleSignin ~ googleSignin: 1');
+      const { idToken } = signInData;
+      console.log('🚀 ~ googleSignin ~ googleSignin: 2');
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      console.log('🚀 ~ googleSignin ~ googleSignin: 3');
+      await auth().signInWithCredential(googleCredential);
+      console.log('🚀 ~ googleSignin ~ googleSignin: 4');
+    } catch (error) {
+      console.error(`[googleSignin] error in googleSignin === ${JSON.stringify(error)}`);
+    }
+  };
   const signUp = async (email: string, password: string) => {
     try {
       await auth().createUserWithEmailAndPassword(email, password);
@@ -62,7 +84,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, initializing, signUp, signIn, signOut }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, initializing, signUp, signIn, signOut, googleSignin }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 
