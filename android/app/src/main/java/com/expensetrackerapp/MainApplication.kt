@@ -1,4 +1,4 @@
-package com.expensetracker
+package com.expensetrackerapp
 
 import android.app.Application
 import com.facebook.react.PackageList

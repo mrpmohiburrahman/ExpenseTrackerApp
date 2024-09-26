@@ -12,7 +12,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 const AppNavigator: React.FC = () => {
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '1036316123714-3b6b5kgpdtcaq840jfp0joen21uta10u.apps.googleusercontent.com',
+      webClientId: '748775571362-v5sse68jlsjloo53quomuu5v0hg5i3q4.apps.googleusercontent.com',
     });
   }, []);
   return (

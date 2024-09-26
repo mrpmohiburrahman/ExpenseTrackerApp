@@ -42,16 +42,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const googleSignin = async () => {
     try {
       const isGoogleServices = await GoogleSignin.hasPlayServices();
-      console.log('🚀 ~ googleSignin ~ isGoogleServices:', isGoogleServices);
-      const signInData = await GoogleSignin.signIn();
-      console.log('🚀 ~ googleSignin ~ signInData:', signInData);
-      console.log('🚀 ~ googleSignin ~ googleSignin: 1');
-      const { idToken } = signInData;
-      console.log('🚀 ~ googleSignin ~ googleSignin: 2');
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      console.log('🚀 ~ googleSignin ~ googleSignin: 3');
+      const {data} = await GoogleSignin.signIn();
+      console.log('🚀 ~ googleSignin ~ signInData:', data);
+      const googleCredential = auth.GoogleAuthProvider.credential(data?.idToken);
       await auth().signInWithCredential(googleCredential);
-      console.log('🚀 ~ googleSignin ~ googleSignin: 4');
     } catch (error) {
       console.error(`[googleSignin] error in googleSignin === ${JSON.stringify(error)}`);
     }
