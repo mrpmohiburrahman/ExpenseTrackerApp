@@ -139,7 +139,7 @@ const LoginScreen: React.FC = () => {
             {loading ? 'Logging in...' : 'Sign in'}
           </Button>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10, paddingTop: 10 }}>
           <Text style={styles.notAmember}>Not A Member?</Text>
           <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
             Sign Up here
