@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import Text from '@components/Text';
+import { View, TouchableOpacity, FlatList } from 'react-native';
 import moment from 'moment';
 import { moderateScale } from 'react-native-size-matters';
 import { Colors } from 'App/constants/Colors';
@@ -40,7 +41,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ data, onItemPress, ty
           borderRadius: 5,
         }}>
         <View style={{ gap: 8 }}>
-          <Text style={{ fontSize: 14, fontWeight: '400' }}>{item.name}</Text>
+          <Text style={{ fontSize: 14, fontWeight: '400', color: Colors.text }}>{item.name}</Text>
           <Text style={{ color: Colors.listSubItem, fontSize: 8 }}>
             {moment(item.date, 'YYYY-MM').format('D MMMM YYYY')}
           </Text>

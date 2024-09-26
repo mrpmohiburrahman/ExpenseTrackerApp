@@ -18,4 +18,5 @@ export const Colors = {
   info: '#1FA314',
   danger: '#F17248',
   white: 'white',
+  placeholder: '#B0BCCB',
 };

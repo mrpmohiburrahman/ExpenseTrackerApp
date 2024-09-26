@@ -1,11 +1,11 @@
-
 // App/screens/Auth/RegisterScreen.tsx
 
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, Button, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
+import Text from '@components/Text';
 
 type AuthStackParamList = {
   Login: undefined;

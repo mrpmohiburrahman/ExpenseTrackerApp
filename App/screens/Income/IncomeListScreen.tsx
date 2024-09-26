@@ -4,10 +4,15 @@ import HeaderWithActions from '@components/HeaderWithActions';
 import TransactionList, { TransactionItem } from '@components/TransactionList';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
-import { addIncome, deleteIncome, editIncome } from '@store/slices/incomeSlice';
+import { clearExpenses } from '@store/slices/expenseSlice';
+import { addIncome, clearIncomes, deleteIncome, editIncome } from '@store/slices/incomeSlice';
 import { RootState } from '@store/store';
+import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
+import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
+import { Colors } from 'App/constants/Colors';
 import moment from 'moment'; // Ensure moment is installed
 import React, { useEffect, useMemo, useState } from 'react';
+import Text from '@components/Text';
 import {
   Alert,
   Button,
@@ -15,7 +20,6 @@ import {
   Modal,
   Platform,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -245,12 +249,19 @@ const IncomeListScreen: React.FC = () => {
         <View style={styles.modalBackdrop}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Edit Income</Text>
-            <TextInput placeholder="Income Name" value={editedName} onChangeText={setEditedName} style={styles.input} />
+            <TextInput
+              placeholder="Income Name"
+              value={editedName}
+              onChangeText={setEditedName}
+              style={styles.input}
+              placeholderTextColor={Colors.placeholder}
+            />
             <TextInput
               placeholder="Date (YYYY-MM-DD)"
               value={editedDate}
               onChangeText={setEditedDate}
               style={styles.input}
+              placeholderTextColor={Colors.placeholder}
             />
             <TextInput
               placeholder="Amount"
@@ -258,6 +269,7 @@ const IncomeListScreen: React.FC = () => {
               onChangeText={setEditedAmount}
               keyboardType="numeric"
               style={styles.input}
+              placeholderTextColor={Colors.placeholder}
             />
             <View style={styles.modalButtonContainer}>
               <Button title="Save" onPress={handleSave} />
@@ -280,7 +292,13 @@ const IncomeListScreen: React.FC = () => {
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalBackdrop}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Add Income</Text>
-            <TextInput placeholder="Income Name" value={newName} onChangeText={setNewName} style={styles.input} />
+            <TextInput
+              placeholder="Income Name"
+              value={newName}
+              onChangeText={setNewName}
+              style={styles.input}
+              placeholderTextColor={Colors.placeholder}
+            />
 
             <TextInput
               placeholder="Amount"
@@ -288,9 +306,10 @@ const IncomeListScreen: React.FC = () => {
               onChangeText={setNewAmount}
               keyboardType="numeric"
               style={styles.input}
+              placeholderTextColor={Colors.placeholder}
             />
             <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
-              <Text>{newDate}</Text>
+              <Text style={{ color: Colors.text }}>{newDate}</Text>
             </TouchableOpacity>
             {showDatePicker && (
               <DateTimePicker
@@ -407,11 +426,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4, // Adds shadow for iOS
   },
   modalTitle: {
+    color: Colors.text,
     fontSize: 22,
     marginBottom: 12,
     textAlign: 'center',
   },
   input: {
+    color: Colors.text,
     height: 50,
     borderColor: '#ccc',
     borderWidth: 1,

@@ -1,12 +1,12 @@
-
 // App/screens/Auth/LoginScreen.tsx
 
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, Button, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import VectorIcon from '@utils/VectorIcons';
+import Text from '@components/Text';
 // import VectorIcon from 'App/utils/VectorIcons';
 // import VectorIcon from '@utils/VectorIcons';
 
