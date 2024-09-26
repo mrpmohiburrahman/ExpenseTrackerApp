@@ -141,7 +141,7 @@ const RegisterScreen: React.FC = () => {
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10, paddingTop: 10 }}>
           <Text style={styles.notAmember}>Already have an account?</Text>
-          <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
             Sign In here
           </Text>
         </View>
