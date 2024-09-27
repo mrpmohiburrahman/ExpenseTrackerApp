@@ -4,8 +4,9 @@ import HeaderWithActions from '@components/HeaderWithActions';
 import TransactionList, { TransactionItem } from '@components/TransactionList';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
-import { deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
+import { addExpense, deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
 import { RootState } from '@store/store';
+import { mergeAndSortTransactions } from '@utils/transactionUtils';
 import { Colors } from 'App/constants/Colors';
 import moment from 'moment'; // Ensure moment is installed
 import React, { useEffect, useMemo, useState } from 'react';
@@ -20,7 +21,7 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts'; // Ensure this is installed
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,7 +42,7 @@ const ExpenseListScreen: React.FC = () => {
   const [appliedMonth, setAppliedMonth] = useState<string>(moment().format('YYYY-MM'));
   const [filteredExpenses, setFilteredExpenses] = useState<TransactionItem[]>([]);
 
-  // States for Add Income Modal
+  // States for Add Expense Modal
   const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
   const [newName, setNewName] = useState<string>('');
   const [newDate, setNewDate] = useState<string>(moment().format('YYYY-MM-DD'));
@@ -105,7 +106,32 @@ const ExpenseListScreen: React.FC = () => {
       setSelectedExpense(null);
     }
   };
+  const handleAddExpense = () => {
+    if (!newName || !newDate || !newAmount) {
+      Alert.alert('Error', 'Please fill all fields.');
+      return;
+    }
 
+    if (!moment(newDate, 'YYYY-MM-DD', true).isValid()) {
+      Alert.alert('Error', 'Date must be in YYYY-MM-DD format.');
+      return;
+    }
+
+    const amountNumber = parseFloat(newAmount);
+    if (isNaN(amountNumber) || amountNumber <= 0) {
+      Alert.alert('Error', 'Please enter a valid amount.');
+      return;
+    }
+
+    dispatch(addExpense(newName, newDate, amountNumber));
+    mergeAndSortTransactions();
+
+    setNewName('');
+    setNewDate(moment().format('YYYY-MM-DD'));
+    setNewAmount('');
+    setAddModalVisible(false);
+    setShowDatePicker(false);
+  };
   // Function to apply month filter based on appliedMonth
   const applyFilter = () => {
     if (appliedMonth) {
@@ -251,7 +277,7 @@ const ExpenseListScreen: React.FC = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-      {/* Modal for Adding Income */}
+      {/* Modal for Adding Expense */}
       <Modal
         visible={addModalVisible}
         animationType="fade"
@@ -262,8 +288,8 @@ const ExpenseListScreen: React.FC = () => {
         }}>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalBackdrop}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Add Income</Text>
-            <TextInput placeholder="Income Name" value={newName} onChangeText={setNewName} style={styles.input} />
+            <Text style={styles.modalTitle}>Add Expense</Text>
+            <TextInput placeholder="Expense Name" value={newName} onChangeText={setNewName} style={styles.input} />
 
             <TextInput
               placeholder="Amount"
@@ -289,7 +315,7 @@ const ExpenseListScreen: React.FC = () => {
               />
             )}
             <View style={styles.modalButtonContainer}>
-              <Button title="Add" onPress={handleSave} />
+              <Button title="Add" onPress={handleAddExpense} />
               <Button
                 title="Cancel"
                 onPress={() => {
