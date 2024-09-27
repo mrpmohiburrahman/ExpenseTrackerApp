@@ -3,10 +3,14 @@ import Text from '@components/Text';
 import TransactionList, { TransactionItem } from '@components/TransactionList';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
+import { validateInterpolationOptions } from '@shopify/react-native-skia';
 import { addIncome, deleteIncome, editIncome } from '@store/slices/incomeSlice';
 import { RootState } from '@store/store';
+import { generatePieChartData } from '@utils/chartUtils';
+import { generateLast12Months } from '@utils/dateUtils';
 import { filterTransactionsByMonth } from '@utils/filterTransactionsByMonth';
 import { mergeAndSortTransactions } from '@utils/transactionUtils';
+import { validateTransactionInput } from '@utils/validateTransactionInput';
 import { Colors } from 'App/constants/Colors';
 import moment from 'moment';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -24,6 +28,7 @@ import {
 import { PieChart } from 'react-native-gifted-charts';
 import { useDispatch, useSelector } from 'react-redux';
 
+const monthOptions = generateLast12Months();
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
   const incomes = useSelector((state: RootState) => state.income.incomes);
@@ -60,19 +65,9 @@ const IncomeListScreen: React.FC = () => {
 
   const handleSave = () => {
     if (selectedIncome) {
-      if (!editedName || !editedDate || !editedAmount) {
-        Alert.alert('Error', 'Please fill all fields.');
-        return;
-      }
-
-      if (!moment(editedDate, 'YYYY-MM-DD', true).isValid()) {
-        Alert.alert('Error', 'Date must be in YYYY-MM-DD format.');
-        return;
-      }
-
-      const amountNumber = parseFloat(editedAmount);
-      if (isNaN(amountNumber) || amountNumber <= 0) {
-        Alert.alert('Error', 'Please enter a valid amount.');
+      const error = validateTransactionInput(editedName, editedDate, editedAmount);
+      if (error) {
+        Alert.alert('Error', error);
         return;
       }
 
@@ -81,7 +76,7 @@ const IncomeListScreen: React.FC = () => {
           id: selectedIncome.id,
           name: editedName,
           date: editedDate,
-          amount: amountNumber,
+          amount: parseFloat(editedAmount),
         })
       );
       setModalVisible(false);
@@ -98,23 +93,14 @@ const IncomeListScreen: React.FC = () => {
   };
 
   const handleAddIncome = () => {
-    if (!newName || !newDate || !newAmount) {
-      Alert.alert('Error', 'Please fill all fields.');
+    const error = validateTransactionInput(newName, newDate, newAmount);
+    if (error) {
+      Alert.alert('Error', error);
       return;
     }
 
-    if (!moment(newDate, 'YYYY-MM-DD', true).isValid()) {
-      Alert.alert('Error', 'Date must be in YYYY-MM-DD format.');
-      return;
-    }
+    dispatch(addIncome(newName, newDate, parseFloat(newAmount)));
 
-    const amountNumber = parseFloat(newAmount);
-    if (isNaN(amountNumber) || amountNumber <= 0) {
-      Alert.alert('Error', 'Please enter a valid amount.');
-      return;
-    }
-
-    dispatch(addIncome(newName, newDate, amountNumber));
     mergeAndSortTransactions();
 
     setNewName('');
@@ -122,16 +108,6 @@ const IncomeListScreen: React.FC = () => {
     setNewAmount('');
     setAddModalVisible(false);
     setShowDatePicker(false);
-  };
-
-
-  const generateMonthOptions = () => {
-    const months = [];
-    const current = moment();
-    for (let i = 0; i < 12; i++) {
-      months.push(current.clone().subtract(i, 'months').format('YYYY-MM'));
-    }
-    return months;
   };
 
   const handleApplyFilter = () => {
@@ -147,30 +123,7 @@ const IncomeListScreen: React.FC = () => {
   const additionalColors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#8E44AD', '#16A085', '#E74C3C', '#F1C40F'];
 
   const pieData = useMemo(() => {
-    const grouped = filteredIncomes.reduce(
-      (acc, income) => {
-        acc[income.name] = (acc[income.name] || 0) + income.amount;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const entries = Object.entries(grouped);
-
-    return entries.map(([name, value], index) => {
-      const truncatedName = truncateToOneWord(name);
-      let color = colorList[index % colorList.length];
-
-      if (index >= colorList.length) {
-        color = additionalColors[index - colorList.length] || '#' + Math.floor(Math.random() * 16777215).toString(16);
-      }
-
-      return {
-        value,
-        color,
-        text: truncatedName,
-      };
-    });
+    return generatePieChartData(filteredIncomes, colorList, additionalColors);
   }, [filteredIncomes]);
   return (
     <View style={styles.container}>
@@ -304,7 +257,7 @@ const IncomeListScreen: React.FC = () => {
               onValueChange={itemValue => setSelectedMonth(itemValue)}
               style={styles.picker}
               mode="dropdown">
-              {generateMonthOptions().map(month => (
+              {monthOptions.map(month => (
                 <Picker.Item key={month} label={moment(month, 'YYYY-MM').format('MMMM YYYY')} value={month} />
               ))}
             </Picker>

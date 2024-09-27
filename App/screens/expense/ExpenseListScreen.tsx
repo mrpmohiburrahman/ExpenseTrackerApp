@@ -6,8 +6,11 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
 import { addExpense, deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
 import { RootState } from '@store/store';
+import { generatePieChartData } from '@utils/chartUtils';
+import { generateLast12Months } from '@utils/dateUtils';
 import { filterTransactionsByMonth } from '@utils/filterTransactionsByMonth';
 import { mergeAndSortTransactions } from '@utils/transactionUtils';
+import { validateTransactionInput } from '@utils/validateTransactionInput';
 import { Colors } from 'App/constants/Colors';
 import moment from 'moment'; // Ensure moment is installed
 import React, { useEffect, useMemo, useState } from 'react';
@@ -26,6 +29,9 @@ import {
 } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts'; // Ensure this is installed
 import { useDispatch, useSelector } from 'react-redux';
+
+// Generate list of months from current to previous 12 months
+const monthOptions = generateLast12Months();
 
 const ExpenseListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -64,23 +70,12 @@ const ExpenseListScreen: React.FC = () => {
 
   const handleSave = () => {
     if (selectedExpense) {
-      if (!editedName || !editedDate || !editedAmount) {
-        Alert.alert('Error', 'Please fill all fields.');
+      const error = validateTransactionInput(editedName, editedDate, editedAmount);
+      if (error) {
+        Alert.alert('Error', error);
         return;
       }
 
-      // Validate date format
-      if (!moment(editedDate, 'YYYY-MM-DD', true).isValid()) {
-        Alert.alert('Error', 'Date must be in YYYY-MM-DD format.');
-        return;
-      }
-
-      // Validate amount
-      const amountNumber = parseFloat(newAmount);
-      if (isNaN(amountNumber) || amountNumber <= 0) {
-        Alert.alert('Error', 'Please enter a valid amount.');
-        return;
-      }
       dispatch(
         editExpense({
           id: selectedExpense.id,
@@ -108,23 +103,13 @@ const ExpenseListScreen: React.FC = () => {
     }
   };
   const handleAddExpense = () => {
-    if (!newName || !newDate || !newAmount) {
-      Alert.alert('Error', 'Please fill all fields.');
+    const error = validateTransactionInput(newName, newDate, newAmount);
+    if (error) {
+      Alert.alert('Error', error);
       return;
     }
 
-    if (!moment(newDate, 'YYYY-MM-DD', true).isValid()) {
-      Alert.alert('Error', 'Date must be in YYYY-MM-DD format.');
-      return;
-    }
-
-    const amountNumber = parseFloat(newAmount);
-    if (isNaN(amountNumber) || amountNumber <= 0) {
-      Alert.alert('Error', 'Please enter a valid amount.');
-      return;
-    }
-
-    dispatch(addExpense(newName, newDate, amountNumber));
+    dispatch(addExpense(newName, newDate, parseFloat(newAmount)));
     mergeAndSortTransactions();
 
     setNewName('');
@@ -132,16 +117,6 @@ const ExpenseListScreen: React.FC = () => {
     setNewAmount('');
     setAddModalVisible(false);
     setShowDatePicker(false);
-  };
-
-  // Generate list of months from current to previous 12 months
-  const generateMonthOptions = () => {
-    const months = [];
-    const current = moment();
-    for (let i = 0; i < 12; i++) {
-      months.push(current.clone().subtract(i, 'months').format('YYYY-MM'));
-    }
-    return months;
   };
 
   // Handle Apply in filter modal
@@ -161,32 +136,7 @@ const ExpenseListScreen: React.FC = () => {
 
   // Compute pieData based on filteredExpenses
   const pieData = useMemo(() => {
-    // Group expenses by name and sum amounts
-    const grouped = filteredExpenses.reduce(
-      (acc, expense) => {
-        acc[expense.name] = (acc[expense.name] || 0) + expense.amount;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const entries = Object.entries(grouped);
-
-    return entries.map(([name, value], index) => {
-      const truncatedName = truncateToOneWord(name);
-      let color = colorList[index % colorList.length];
-
-      if (index >= colorList.length) {
-        // Assign additional colors or generate random if exceeding predefined colors
-        color = additionalColors[index - colorList.length] || '#' + Math.floor(Math.random() * 16777215).toString(16);
-      }
-
-      return {
-        value,
-        color,
-        text: truncatedName,
-      };
-    });
+    return generatePieChartData(filteredExpenses, colorList, additionalColors);
   }, [filteredExpenses]);
 
   return (
@@ -329,7 +279,7 @@ const ExpenseListScreen: React.FC = () => {
                   onValueChange={itemValue => setSelectedMonth(itemValue)}
                   style={styles.picker}
                   mode="dropdown">
-                  {generateMonthOptions().map(month => (
+                  {monthOptions.map(month => (
                     <Picker.Item key={month} label={moment(month, 'YYYY-MM').format('MMMM YYYY')} value={month} />
                   ))}
                 </Picker>
