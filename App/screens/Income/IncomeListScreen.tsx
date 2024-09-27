@@ -207,7 +207,7 @@ const IncomeListScreen: React.FC = () => {
   }, [filteredIncomes]);
   return (
     <View style={styles.container}>
-      <Button
+      {/* <Button
         title="cleare income and expnse"
         onPress={() => {
           dispatch(clearIncomes());
@@ -216,7 +216,7 @@ const IncomeListScreen: React.FC = () => {
           addRandomExpenses();
           // addRandomFinancials();
         }}
-      />
+      /> */}
       <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
         <PieChart
           showText

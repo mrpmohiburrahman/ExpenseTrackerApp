@@ -1,6 +1,6 @@
 import React from 'react';
 import Text from '@components/Text';
-import { View, TouchableOpacity, FlatList } from 'react-native';
+import { View, TouchableOpacity, FlatList, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import moment from 'moment';
 import { moderateScale } from 'react-native-size-matters';
 import { Colors } from 'App/constants/Colors';
@@ -14,12 +14,14 @@ export type TransactionItem = {
 };
 
 interface TransactionListProps {
+  contentContainerStyle?: StyleProp<ViewStyle>;
   data: TransactionItem[];
   onItemPress: (item: TransactionItem) => void;
   type: 'income' | 'expense' | 'both'; // Updated to support 'both'
+  singleItemStyle?: StyleProp<ViewStyle>
 }
 
-const TransactionList: React.FC<TransactionListProps> = ({ data, onItemPress, type }) => {
+const TransactionList: React.FC<TransactionListProps> = ({ data, onItemPress, type, contentContainerStyle, singleItemStyle }) => {
   const getSign = (itemType: 'income' | 'expense', amount: number) =>
     itemType === 'expense' ? `-${amount.toFixed(2)}` : `+${amount.toFixed(2)}`;
 
@@ -31,7 +33,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ data, onItemPress, ty
     return (
       <TouchableOpacity
         onPress={() => onItemPress(item)}
-        style={{
+        style={[{
           height: moderateScale(69),
           padding: 12,
           flexDirection: 'row',
@@ -39,7 +41,10 @@ const TransactionList: React.FC<TransactionListProps> = ({ data, onItemPress, ty
           alignItems: 'center',
           backgroundColor: Colors.white,
           borderRadius: 5,
-        }}>
+          
+        },
+        singleItemStyle
+        ]}>
         <View style={{ gap: 8 }}>
           <Text style={{ fontSize: 14, fontWeight: '400', color: Colors.text }}>{item.name}</Text>
           <Text style={{ color: Colors.listSubItem, fontSize: 8 }}>
@@ -55,9 +60,12 @@ const TransactionList: React.FC<TransactionListProps> = ({ data, onItemPress, ty
     <FlatList
       data={data}
       keyExtractor={item => item.id}
-      contentContainerStyle={{
-        rowGap: 10,
-      }}
+      contentContainerStyle={[
+        {
+          rowGap: 10,
+        },
+        contentContainerStyle,
+      ]}
       renderItem={renderTransactionItem}
     />
   );

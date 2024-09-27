@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '@store/store';
 import uuid from 'react-native-uuid';
 
 // Define the structure of an Expense Item
@@ -62,3 +63,5 @@ const expenseSlice = createSlice({
 // Export actions and reducer
 export const { addExpense, editExpense, deleteExpense, clearExpenses } = expenseSlice.actions;
 export default expenseSlice.reducer;
+
+export const expense = (state: RootState) => state.expense;

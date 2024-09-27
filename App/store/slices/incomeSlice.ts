@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '@store/store';
 import uuid from 'react-native-uuid';
 
 // Define the structure of an Income Item
@@ -61,4 +62,6 @@ const incomeSlice = createSlice({
 
 // Export actions and reducer
 export const { addIncome, editIncome, deleteIncome, clearIncomes } = incomeSlice.actions;
+
+export const income = (state: RootState) => state.income;
 export default incomeSlice.reducer;
