@@ -22,6 +22,7 @@ import { Colors } from 'App/constants/Colors';
 import AgreementText from '@components/AgreementText';
 import VectorIcon from '@utils/VectorIcons';
 import { isValidEmail } from '@utils/isValidEmail';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type AuthStackParamList = {
   Login: undefined;
@@ -51,7 +52,6 @@ const RegisterScreen: React.FC = () => {
     agreement?: string;
   }>({});
 
-  
   const validateInputs = () => {
     const newErrors: typeof errors = {};
 
@@ -123,9 +123,9 @@ const RegisterScreen: React.FC = () => {
       </View>
     );
   }
-
+  const inset = useSafeAreaInsets();
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: inset.top }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -235,7 +235,7 @@ const RegisterScreen: React.FC = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 

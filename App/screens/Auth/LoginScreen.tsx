@@ -23,6 +23,7 @@ import Text from '@components/Text';
 import { Colors } from 'App/constants/Colors';
 import { TouchableOpacity } from 'react-native';
 import { isValidEmail } from '@utils/isValidEmail';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type AuthStackParamList = {
   Login: undefined;
@@ -63,9 +64,9 @@ const LoginScreen: React.FC = () => {
       </View>
     );
   }
-
+  const inset = useSafeAreaInsets();
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: inset.top }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -144,7 +145,7 @@ const LoginScreen: React.FC = () => {
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 
