@@ -5,6 +5,7 @@ import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import { Bar, CartesianChart, Line, useChartPressState } from 'victory-native';
 
 import { Text as SKText } from '@shopify/react-native-skia';
+import { SCREEN_WIDTH } from 'App/constants/metrics';
 
 // const DATA = Array.from({ length: 5 }, (_, i) => ({
 //   day: i,
@@ -59,19 +60,58 @@ export default function GettingStartedScreen(props: { segment: string }) {
 
   return (
     <SafeAreaView style={styles.safeView}>
-      <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
+      <View
+        style={{
+          flex: 1,
+          maxHeight: 400,
+          padding: 32,
+          borderWidth: 1,
+        }}>
         <CartesianChart
           data={data}
           xKey="month"
           yKeys={['listenCount', 'specialCount']}
           domainPadding={{ left: 30, right: 30, top: 60 }}
+          // axisOptions={{
+          //   font: toolTipFont,
+          //   formatXLabel: value => {
+          //     return `${value}`;
+          //   },
+          //   formatYLabel: value => {
+          //     return `${value}`;
+          //   },
+
+          //   lineWidth: {
+          //     grid: {
+          //       x: 0,
+          //       y: 0,
+          //     },
+          //     frame: 0,
+          //   },
+
+          //   // labelColor: 'black',
+          // }}
+          // frame={{
+          //   lineColor: 'transparent',
+          //   lineWidth: 0,
+          // }}
+
           xAxis={{
+            font: toolTipFont,
             formatXLabel: value => {
               return `${value}`;
             },
             lineWidth: 0,
+            // labelOffset: -10,
+            labelPosition: 'outset',
+            axisSide: 'bottom',
           }}
-          yAxis={[{ lineWidth: 0 }]}
+          yAxis={[
+            {
+              lineWidth: 0,
+              lineColor: 'black',
+            },
+          ]}
           chartPressState={state}>
           {({ points, chartBounds }) => (
             <>
@@ -80,6 +120,9 @@ export default function GettingStartedScreen(props: { segment: string }) {
                 chartBounds={chartBounds}
                 animate={{ type: 'spring' }}
                 innerPadding={0.2}
+                // labels={{ position: 'bottom', font: toolTipFont, color: 'black' }}
+                // labels={({ datum }) => `${datum.listenCount}`} // Add this line for labels
+
                 roundedCorners={{
                   topLeft: 5,
                   topRight: 5,
