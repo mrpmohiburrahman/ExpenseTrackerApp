@@ -31,6 +31,7 @@ const incomeSlice = createSlice({
         state.incomes.push(action.payload);
       },
       prepare: (name: string, date: string, amount: number) => {
+        console.log('🚀 ~ date:', date);
         return {
           payload: {
             id: uuid.v4(),

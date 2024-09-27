@@ -10,45 +10,50 @@ export type TransactionItem = {
   name: string;
   amount: number;
   date: string;
-  type: 'income' | 'expense'; // Added type to each transaction item
+  type: 'income' | 'expense';
 };
 
 interface TransactionListProps {
   contentContainerStyle?: StyleProp<ViewStyle>;
   data: TransactionItem[];
   onItemPress: (item: TransactionItem) => void;
-  type: 'income' | 'expense' | 'both'; // Updated to support 'both'
-  singleItemStyle?: StyleProp<ViewStyle>
+  type: 'income' | 'expense' | 'both';
+  singleItemStyle?: StyleProp<ViewStyle>;
 }
 
-const TransactionList: React.FC<TransactionListProps> = ({ data, onItemPress, type, contentContainerStyle, singleItemStyle }) => {
+const TransactionList: React.FC<TransactionListProps> = ({
+  data,
+  onItemPress,
+  type,
+  contentContainerStyle,
+  singleItemStyle,
+}) => {
   const getSign = (itemType: 'income' | 'expense', amount: number) =>
     itemType === 'expense' ? `-${amount.toFixed(2)}` : `+${amount.toFixed(2)}`;
 
   const getAmountColor = (itemType: 'income' | 'expense') => (itemType === 'expense' ? Colors.danger : Colors.info);
 
   const renderTransactionItem = ({ item }: { item: TransactionItem }) => {
-    // Determine sign and color based on item's type (income or expense)
     const itemType = type === 'both' ? item.type : type;
     return (
       <TouchableOpacity
         onPress={() => onItemPress(item)}
-        style={[{
-          height: moderateScale(69),
-          padding: 12,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          backgroundColor: Colors.white,
-          borderRadius: 5,
-          
-        },
-        singleItemStyle
+        style={[
+          {
+            height: moderateScale(69),
+            padding: 12,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            backgroundColor: Colors.white,
+            borderRadius: 5,
+          },
+          singleItemStyle,
         ]}>
         <View style={{ gap: 8 }}>
           <Text style={{ fontSize: 14, fontWeight: '400', color: Colors.text }}>{item.name}</Text>
           <Text style={{ color: Colors.listSubItem, fontSize: 8 }}>
-            {moment(item.date, 'YYYY-MM').format('D MMMM YYYY')}
+            {moment(item.date, 'YYYY-MM-DD').format('DD MMMM YYYY')}
           </Text>
         </View>
         <Text style={{ color: getAmountColor(itemType), fontWeight: '700' }}>{getSign(itemType, item.amount)}</Text>

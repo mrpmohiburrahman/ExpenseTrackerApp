@@ -1,32 +1,29 @@
 // App/screens/ExpenseListScreen.tsx
 
-import { deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
-import { RootState } from '@store/store';
-import React, { useState, useEffect, useMemo } from 'react';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Button,
-  TextInput,
-  Alert,
-  Platform,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-} from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
-import moment from 'moment'; // Ensure moment is installed
-import { PieChart } from 'react-native-gifted-charts'; // Ensure this is installed
-import { Colors } from 'App/constants/Colors';
-import VectorIcon from '@utils/VectorIcons';
-import { moderateScale } from 'react-native-size-matters';
 import HeaderWithActions from '@components/HeaderWithActions';
 import TransactionList, { TransactionItem } from '@components/TransactionList';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
+import { deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
+import { RootState } from '@store/store';
+import { Colors } from 'App/constants/Colors';
+import moment from 'moment'; // Ensure moment is installed
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Alert,
+  Button,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
+} from 'react-native';
+import { PieChart } from 'react-native-gifted-charts'; // Ensure this is installed
+import { useDispatch, useSelector } from 'react-redux';
 
 const ExpenseListScreen: React.FC = () => {
   const dispatch = useDispatch();

@@ -11,10 +11,9 @@ import VectorIcon from '@utils/VectorIcons';
 import { Colors } from 'App/constants/Colors';
 import { useSelector } from 'react-redux';
 
-export default function GettingStartedScreen(props: { segment: string }) {
+export default function DashboardScreen(props: { segment: string }) {
   const [selectedPeriod, setSelectedId] = React.useState<'Week' | 'Month' | 'Year'>('Week');
   const sortedTransactions = useSelector(selectAllSortedTransactions);
-  console.log('🚀 ~ GettingStartedScreen ~ sortedTransactions:', sortedTransactions);
   // console.log('🚀 ~ GettingStartedScreen ~ sortedTransactions:', sortedTransactions);
   return (
     <SafeAreaView style={{ flex: 1 }}>
