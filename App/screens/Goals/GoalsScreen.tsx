@@ -1,12 +1,27 @@
-import { Circle, LinearGradient, vec } from '@shopify/react-native-skia';
+import { Circle, LinearGradient, useFont, vec } from '@shopify/react-native-skia';
 import * as React from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
-import type { SharedValue } from 'react-native-reanimated';
+import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import { Bar, CartesianChart, Line, useChartPressState } from 'victory-native';
 
+import { Text as SKText } from '@shopify/react-native-skia';
 export default function GettingStartedScreen(props: { segment: string }) {
   const { state, isActive } = useChartPressState({ x: 0, y: { highTmp: 0 } });
 
+  const toolTipFont = useFont(require('@assets/fonts/Inter_18pt-Black.ttf'), 24);
+
+  const value = useDerivedValue(() => {
+    return '$' + state.y.highTmp.value.value;
+  }, [state]);
+  const textXPosition = useDerivedValue(() => {
+    if (!toolTipFont) {
+      return 0;
+    }
+    return state.x.position.value - toolTipFont.measureText(value.value).width / 2;
+  }, [value, toolTipFont]);
+  const textYPosition = useDerivedValue(() => {
+    return state.y.highTmp.position.value - 15;
+  }, [value]);
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={{ flex: 1, maxHeight: 400, padding: 32 }}>
@@ -14,6 +29,7 @@ export default function GettingStartedScreen(props: { segment: string }) {
           data={DATA}
           xKey="day"
           yKeys={['highTmp']}
+          domainPadding={{ left: 30, right: 30 }}
           xAxis={{
             formatXLabel: value => {
               return `${value}`;
@@ -36,7 +52,13 @@ export default function GettingStartedScreen(props: { segment: string }) {
                 <LinearGradient start={vec(0, 0)} end={vec(0, 400)} colors={['#efe9de', '#efe9de']} />
               </Bar>
               <Line curveType="cardinal" points={points.highTmp} color="#cea868" strokeWidth={3} connectMissingData />
-              {isActive && <ToolTip x={state.x.position} y={state.y.highTmp.position} />}
+              {/* {isActive && <ToolTip x={state.x.position} y={state.y.highTmp.position} />} */}
+              {isActive ? (
+                <>
+                  <SKText font={toolTipFont} color={'black'} x={textXPosition} y={textYPosition} text={value} />
+                  <Circle cx={state.x.position} cy={state.y.highTmp.position} r={8} color={'grey'} opacity={0.8} />
+                </>
+              ) : null}
             </>
           )}
         </CartesianChart>
