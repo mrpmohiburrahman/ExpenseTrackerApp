@@ -26,7 +26,10 @@ const useDateNames = (selectedPeriod: string, data: any[]): string[] => {
 
       case 'Year':
         // Display the current year.
-        return [currentDate.getFullYear().toString()];
+        const yearNames = Array.from({ length: 5 }, (_, index) => {
+          return (currentDate.getFullYear() - index).toString();
+        }).reverse();
+        return yearNames;
 
       default:
         return [];

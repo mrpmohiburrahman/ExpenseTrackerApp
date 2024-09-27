@@ -4,15 +4,12 @@ import { View } from 'react-native';
 import { useDerivedValue } from 'react-native-reanimated';
 import { Bar, CartesianChart, Line, useChartPressState } from 'victory-native';
 
-import Text from '@components/Text';
-import { Text as SKText } from '@shopify/react-native-skia';
-import { getChartData } from '@utils/chartDataUtils';
-import { Colors } from 'App/constants/Colors';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from 'App/constants/metrics';
-import useDateNames from '@hooks/useDateNames';
-import DateNamesDisplay from './DateNamesDisplay';
 import useChartData from '@hooks/useChartData';
 import useChartDerivedValues from '@hooks/useChartDerivedValues';
+import useDateNames from '@hooks/useDateNames';
+import { Text as SKText } from '@shopify/react-native-skia';
+import { SCREEN_HEIGHT } from 'App/constants/metrics';
+import DateNamesDisplay from './DateNamesDisplay';
 
 type ChartType = { selectedPeriod: any };
 
