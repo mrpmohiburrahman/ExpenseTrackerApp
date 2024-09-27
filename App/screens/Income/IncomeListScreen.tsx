@@ -27,6 +27,7 @@ import {
 import { PieChart } from 'react-native-gifted-charts';
 import { useDispatch, useSelector } from 'react-redux';
 import { addRandomFinancials } from '@utils/RandomData/addRandomFinancials';
+import { mergeAndSortTransactions } from '@utils/transactionUtils';
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -126,6 +127,7 @@ const IncomeListScreen: React.FC = () => {
 
     // Dispatch the addIncome action
     dispatch(addIncome(newName, newDate, amountNumber));
+    mergeAndSortTransactions();
 
     // Reset the form and close the modal
     setNewName('');

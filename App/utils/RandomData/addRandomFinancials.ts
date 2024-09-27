@@ -2,6 +2,7 @@ import moment from 'moment';
 import { store } from '@store/store';
 import { addExpense } from '@store/slices/expenseSlice';
 import { addIncome } from '@store/slices/incomeSlice';
+import { mergeAndSortTransactions } from '@utils/transactionUtils';
 
 const expenseNames = [
   'Groceries',
@@ -76,6 +77,7 @@ const addRandomFinancials = () => {
       totalExpenses += amount;
       const date = moment(`${month}-01`).format('YYYY-MM-DD');
       store.dispatch(addExpense(expenseNames[i % expenseNames.length], date, amount));
+      mergeAndSortTransactions();
     }
   });
 
@@ -90,6 +92,7 @@ const addRandomFinancials = () => {
       remainingIncome -= amount;
       const date = moment(`${month}-01`).format('YYYY-MM-DD');
       store.dispatch(addIncome(incomeNames[i % incomeNames.length], date, amount));
+      mergeAndSortTransactions();
     }
   });
 

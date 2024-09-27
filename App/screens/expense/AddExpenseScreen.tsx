@@ -1,4 +1,3 @@
-
 // App/screens/AddExpenseScreen.tsx
 
 import React, { useState } from 'react';
@@ -7,16 +6,14 @@ import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { addExpense } from '@store/slices/expenseSlice';
+import { mergeAndSortTransactions } from '@utils/transactionUtils';
 
 type RootStackParamList = {
   AddExpense: undefined;
   // Other routes
 };
 
-type AddExpenseNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'AddExpense'
->;
+type AddExpenseNavigationProp = NativeStackNavigationProp<RootStackParamList, 'AddExpense'>;
 
 const AddExpenseScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -33,24 +30,15 @@ const AddExpenseScreen: React.FC = () => {
     }
 
     dispatch(addExpense(name, date, parseFloat(amount)));
+    mergeAndSortTransactions();
     Alert.alert('Success', 'Expense added successfully.');
     navigation.goBack();
   };
 
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder="Expense Name"
-        value={name}
-        onChangeText={setName}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Date (YYYY-MM-DD)"
-        value={date}
-        onChangeText={setDate}
-        style={styles.input}
-      />
+      <TextInput placeholder="Expense Name" value={name} onChangeText={setName} style={styles.input} />
+      <TextInput placeholder="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} style={styles.input} />
       <TextInput
         placeholder="Amount"
         value={amount}

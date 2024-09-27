@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { store } from '@store/store';
 import { addIncome } from '@store/slices/incomeSlice';
+import { addIncomeAndMerge } from '@store/thunks/incomeThunks';
 
 // Generate random names for the incomes
 const incomeNames = [
@@ -46,7 +47,9 @@ export const addRandomIncomes = () => {
       const date = currentDate.clone().subtract(week, 'weeks').startOf('isoWeek').add(i, 'days').format('YYYY-MM-DD');
       const name = incomeNames[incomeCounter % incomeNames.length];
       const amount = getRandomAmount();
-      store.dispatch(addIncome(name, date, amount)); // Dispatch income with generated name, date, and amount
+      // store.dispatch(addIncome(name, date, amount)); // Dispatch income with generated name, date, and amount
+      store.dispatch(addIncomeAndMerge(name, date, amount)); // Use the thunk instead of addIncome
+
       incomeCounter++;
     }
   }

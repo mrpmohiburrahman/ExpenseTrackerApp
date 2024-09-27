@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { store } from '@store/store';
 import { addExpense } from '@store/slices/expenseSlice';
+import { addExpenseAndMerge } from '@store/thunks/expenseThunks';
 
 // Generate random names for the expenses
 const expenseNames = [
@@ -46,7 +47,9 @@ export const addRandomExpenses = () => {
       const date = currentDate.clone().subtract(week, 'weeks').startOf('isoWeek').add(i, 'days').format('YYYY-MM-DD');
       const name = expenseNames[expenseCounter % expenseNames.length];
       const amount = getRandomAmount();
-      store.dispatch(addExpense(name, date, amount)); // Dispatch expense with generated name, date, and amount
+      // store.dispatch(addExpense(name, date, amount)); // Dispatch expense with generated name, date, and amount
+      store.dispatch(addExpenseAndMerge(name, date, amount)); // Dispatch expense with generated name, date, and amount
+      
       expenseCounter++;
     }
   }

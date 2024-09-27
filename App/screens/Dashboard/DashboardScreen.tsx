@@ -1,26 +1,27 @@
 import * as React from 'react';
-import { FlatList, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
+import { FlatList, SafeAreaView, View } from 'react-native';
 
 import Chart from '@components/Chart';
+import ListEmptyScreen from '@components/ListEmptyScreen';
 import PeriodSelector from '@components/PeriodSelector';
 import Text from '@components/Text';
-import { mergeAndSortTransactions } from '@utils/transactionUtils';
 import TransactionList from '@components/TransactionList';
+import { selectAllSortedTransactions } from '@store/slices/allTransactionSlice';
 import VectorIcon from '@utils/VectorIcons';
 import { Colors } from 'App/constants/Colors';
-import { clearIncomes } from '@store/slices/incomeSlice';
-import { clearExpenses } from '@store/slices/expenseSlice';
-import ListEmptyScreen from '@components/ListEmptyScreen';
+import { useSelector } from 'react-redux';
 
 export default function GettingStartedScreen(props: { segment: string }) {
   const [selectedPeriod, setSelectedId] = React.useState<'Week' | 'Month' | 'Year'>('Week');
-  const mergedData = mergeAndSortTransactions();
+  const sortedTransactions = useSelector(selectAllSortedTransactions);
+  console.log('🚀 ~ GettingStartedScreen ~ sortedTransactions:', sortedTransactions);
+  // console.log('🚀 ~ GettingStartedScreen ~ sortedTransactions:', sortedTransactions);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
-        data={mergedData}
+        data={sortedTransactions}
         ListHeaderComponent={() => {
-          if (!mergedData) return <View />;
+          if (!sortedTransactions || sortedTransactions.length === 0) return <View />;
           return (
             <>
               <View style={{ paddingHorizontal: 10 }}>
@@ -53,7 +54,7 @@ export default function GettingStartedScreen(props: { segment: string }) {
         renderItem={({}) => {
           return (
             <TransactionList
-              data={mergedData}
+              data={sortedTransactions}
               type="both"
               onItemPress={() => {}}
               singleItemStyle={{

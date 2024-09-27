@@ -6,6 +6,7 @@ import { clearExpenses } from '@store/slices/expenseSlice';
 import { useDispatch } from 'react-redux';
 import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
 import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
+import { clearAllSortedTransactions } from '@store/slices/allTransactionSlice';
 
 const GoalsScreen = () => {
   const dispatch = useDispatch();
@@ -22,8 +23,10 @@ const GoalsScreen = () => {
         onPress={() => {
           dispatch(clearIncomes());
           dispatch(clearExpenses());
+          dispatch(clearAllSortedTransactions());
           addRandomIncomes();
           addRandomExpenses();
+
           // addRandomFinancials();
         }}>
         <Text>Press here to populate with data</Text>
@@ -37,9 +40,9 @@ const GoalsScreen = () => {
           borderRadius: 10,
         }}
         onPress={() => {
-          
           dispatch(clearIncomes());
           dispatch(clearExpenses());
+          dispatch(clearAllSortedTransactions());
           // addRandomFinancials();
         }}>
         <Text>Empty The Store</Text>

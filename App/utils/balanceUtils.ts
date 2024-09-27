@@ -1,7 +1,7 @@
 // src/utils/balanceUtils.ts
 
-import { TransactionItem } from '../components/TransactionList'; // Adjust the import path as necessary
-import { mergeAndSortTransactions } from './transactionUtils';
+import { AllSortedTransactionsItem } from '@store/slices/allTransactionSlice';
+import { store } from '@store/store';
 
 interface Balances {
   weekly: Record<string, number>;
@@ -10,7 +10,7 @@ interface Balances {
 }
 
 export const getBalanceByPeriod = (): Balances => {
-  const transactions: TransactionItem[] = mergeAndSortTransactions();
+  const transactions: AllSortedTransactionsItem[] = store.getState().allTransaction.allSortedTransactions;
   const balances: Balances = {
     weekly: {},
     monthly: {},

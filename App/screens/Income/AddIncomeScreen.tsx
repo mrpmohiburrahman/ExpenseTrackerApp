@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { addIncome } from '@store/slices/incomeSlice';
+import { mergeAndSortTransactions } from '@utils/transactionUtils';
 
 type RootStackParamList = {
   AddIncome: undefined;
@@ -33,6 +34,7 @@ const AddIncomeScreen: React.FC = () => {
     }
 
     dispatch(addIncome(name, date, parseFloat(amount)));
+    mergeAndSortTransactions();
     Alert.alert('Success', 'Income added successfully.');
     navigation.goBack();
   };

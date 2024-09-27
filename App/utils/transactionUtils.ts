@@ -1,13 +1,14 @@
 // src/utils/transactionUtils.ts
-
-import { store } from '@store/store';
+import { AppDispatch, RootState, store } from '@store/store';
 import { TransactionItem } from '../components/TransactionList'; // Adjust the import path as necessary
+import { addAllSortedTransactions, AllSortedTransactionsItem } from '@store/slices/allTransactionSlice';
 
 export const mergeAndSortTransactions = () => {
   const incomesState = store.getState().income;
   const expensesState = store.getState().expense;
   const { incomes } = incomesState;
   const { expenses } = expensesState;
+
   // Map incomes to TransactionItem
   const incomeTransactions: TransactionItem[] = incomes.map(income => ({
     id: income.id,
@@ -27,7 +28,7 @@ export const mergeAndSortTransactions = () => {
   }));
 
   // Merge both arrays
-  const allTransactions = [...incomeTransactions, ...expenseTransactions];
+  const allTransactions: AllSortedTransactionsItem[] = [...incomeTransactions, ...expenseTransactions];
 
   // Sort the merged array by date in descending order
   allTransactions.sort((a, b) => {
@@ -36,5 +37,5 @@ export const mergeAndSortTransactions = () => {
     return dateB - dateA; // For descending order
   });
 
-  return allTransactions;
+  store.dispatch(addAllSortedTransactions(allTransactions));
 };

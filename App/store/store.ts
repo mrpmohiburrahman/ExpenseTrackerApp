@@ -3,16 +3,19 @@ import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, R
 import mmkvStorage from './mmkvStorage';
 import expenseReducer from './slices/expenseSlice';
 import incomeReducer from './slices/incomeSlice';
+import allTransactionReducer from './slices/allTransactionSlice';
+import { thunk } from 'redux-thunk';
 
 const rootReducer = combineReducers({
   income: incomeReducer,
   expense: expenseReducer,
+  allTransaction: allTransactionReducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage: mmkvStorage,
-  whitelist: ['income', 'expense'],
+  whitelist: ['income', 'expense', 'allTransaction'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -24,7 +27,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(thunk),
 });
 
 export const persistor = persistStore(store);
