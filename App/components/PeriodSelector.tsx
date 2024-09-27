@@ -6,26 +6,25 @@ import { SCREEN_WIDTH } from 'App/constants/metrics';
 import { Colors } from 'App/constants/Colors';
 
 interface Period {
-  id: 'Day' | 'Week' | 'Month' | 'Year';
-  title: 'Day' | 'Week' | 'Month' | 'Year';
+  id: 'Week' | 'Month' | 'Year';
+  title: 'Week' | 'Month' | 'Year';
 }
 
 interface PeriodSelectorProps {
-  selectedId: 'Day' | 'Week' | 'Month' | 'Year';
-  onSelect: (id: 'Day' | 'Week' | 'Month' | 'Year') => void;
+  selectedPeriod: 'Week' | 'Month' | 'Year';
+  onSelect: (id: 'Week' | 'Month' | 'Year') => void;
 }
 
 const PERIODS: Period[] = [
-  { id: 'Day', title: 'Day' },
   { id: 'Week', title: 'Week' },
   { id: 'Month', title: 'Month' },
   { id: 'Year', title: 'Year' },
 ];
 
-const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selectedId, onSelect }) => {
+const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selectedPeriod, onSelect }) => {
   const renderItem = ({ item }: { item: Period }) => {
-    const backgroundColor = selectedId === item.id ? Colors.primary : Colors.white;
-    const textColor = selectedId === item.id ? '#fff' : '#ADAFBD';
+    const backgroundColor = selectedPeriod === item.id ? Colors.primary : Colors.white;
+    const textColor = selectedPeriod === item.id ? '#fff' : '#ADAFBD';
 
     return (
       <TouchableOpacity

@@ -1,14 +1,15 @@
 import { Circle, Group, LinearGradient, RoundedRect, Shadow, useFont, vec } from '@shopify/react-native-skia';
 import * as React from 'react';
 import { SafeAreaView, View } from 'react-native';
-import { useDerivedValue } from 'react-native-reanimated';
+import { runOnUI, useDerivedValue } from 'react-native-reanimated';
 import { Bar, CartesianChart, Line, useChartPressState } from 'victory-native';
 
 import PeriodSelector from '@components/PeriodSelector';
 import Text from '@components/Text';
 import { Text as SKText } from '@shopify/react-native-skia';
 import { getChartData } from '@utils/chartDataUtils';
-import { SCREEN_HEIGHT } from 'App/constants/metrics';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from 'App/constants/metrics';
+import { Colors } from 'App/constants/Colors';
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -18,11 +19,7 @@ const DATA = (length: number = 10) =>
   }));
 
 export default function GettingStartedScreen(props: { segment: string }) {
-  const period = 'monthly'; // Change this to 'weekly' or 'yearly' as needed
-  const datas = getChartData(period, 5);
-
-  console.log('🚀 ~ GettingStartedScreen ~ datas:', datas);
-  const [data, setData] = React.useState(DATA(5));
+  // const [data, setData] = React.useState(DATA(5));
   // console.log('🚀 ~ GettingStartedScreen ~ data:', data);
 
   const { state, isActive } = useChartPressState({
@@ -35,7 +32,9 @@ export default function GettingStartedScreen(props: { segment: string }) {
   const width = 100;
   const height = 40;
   const borderRadius = 30;
-
+  runOnUI(state => {
+    console.log(`${JSON.stringify(state.y.listenCount.value.value)}`);
+  })(state);
   const value = useDerivedValue(() => {
     return '$ ' + state.y.listenCount.value.value;
   }, [state]);
@@ -62,8 +61,36 @@ export default function GettingStartedScreen(props: { segment: string }) {
     return state.y.listenCount.position.value - height * 1.5;
   }, [value]);
 
-  const [selectedId, setSelectedId] = React.useState<'Day' | 'Week' | 'Month' | 'Year'>('Week');
+  const [selectedPeriod, setSelectedId] = React.useState<'Week' | 'Month' | 'Year'>('Week');
 
+  const datas = getChartData(selectedPeriod, 5);
+  const [data, setData] = React.useState(datas);
+  React.useEffect(() => {
+    const datas = getChartData(selectedPeriod, 5);
+
+    setData(() => datas);
+  }, [selectedPeriod]);
+
+  // console.log(`🚀 ~ GettingStartedScreen ~ datas for ${selectedPeriod}:`, datas);
+
+  const [dateNames, setDateNames] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    const currentDate = new Date();
+    if (selectedPeriod === 'Week') {
+      console.log('data === ', JSON.stringify(data));
+
+      setDateNames(() => data.map(item => item.month));
+    } else if (selectedPeriod === 'Month') {
+      const monthNames = Array.from({ length: 5 }, (_, index) => {
+        const month = new Date(currentDate.getFullYear(), currentDate.getMonth() - index);
+        return month.toLocaleDateString('en-US', { month: 'long' });
+      }).reverse();
+      setDateNames(monthNames);
+    } else if (selectedPeriod === 'Year') {
+      setDateNames([currentDate.getFullYear().toString()]);
+    }
+  }, [selectedPeriod]);
   return (
     <SafeAreaView
       style={{
@@ -77,17 +104,17 @@ export default function GettingStartedScreen(props: { segment: string }) {
         <View style={{ paddingLeft: 10, paddingVertical: 20 }}>
           <Text style={{ color: '#363B64', fontSize: 24, fontWeight: '700' }}>Your Revenue</Text>
         </View>
-        <PeriodSelector selectedId={selectedId} onSelect={setSelectedId} />
+        <PeriodSelector selectedPeriod={selectedPeriod} onSelect={setSelectedId} />
       </View>
 
       <View
         style={{
           height: SCREEN_HEIGHT * 0.33,
-          borderWidth: 1,
+          // borderWidth: 1,
         }}>
         <CartesianChart
           data={data}
-          xKey="month"
+          xKey={'month'}
           yKeys={['listenCount', 'specialCount']}
           domainPadding={{ left: 40, right: 40, top: 30 }}
           xAxis={{
@@ -131,7 +158,7 @@ export default function GettingStartedScreen(props: { segment: string }) {
                 strokeWidth={3}
                 connectMissingData
               />
-              {true ? (
+              {isActive ? (
                 <Group>
                   <Circle cx={state.x.position} cy={state.y.listenCount.position} r={8} color={'grey'} opacity={0.8} />
                   <RoundedRect
@@ -150,6 +177,35 @@ export default function GettingStartedScreen(props: { segment: string }) {
             </>
           )}
         </CartesianChart>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        {selectedPeriod === 'Month' &&
+          dateNames &&
+          dateNames.map(item => (
+            <View key={item} style={{ borderWidth: 0, width: SCREEN_WIDTH / 5, alignItems: 'center' }}>
+              <Text style={{ fontWeight: '400', fontSize: 18, color: Colors.tab }}>{item?.slice(0, 3)}</Text>
+            </View>
+          ))}
+        {selectedPeriod === 'Year' &&
+          dateNames.map(item => (
+            <View key={item} style={{ borderWidth: 0, width: SCREEN_WIDTH / 5, alignItems: 'center' }}>
+              <Text style={{ fontWeight: '400', fontSize: 18, color: Colors.tab }}>{item}</Text>
+            </View>
+          ))}
+        {selectedPeriod === 'Week' &&
+          dateNames &&
+          dateNames.map(item => (
+            <View
+              key={item}
+              style={{
+                borderWidth: 0,
+                width: SCREEN_WIDTH / 5,
+                alignItems: 'center',
+                transform: [{ rotate: '0deg' }],
+              }}>
+              <Text style={{ fontWeight: '400', fontSize: 12, color: Colors.tab }}>{item}</Text>
+            </View>
+          ))}
       </View>
     </SafeAreaView>
   );
