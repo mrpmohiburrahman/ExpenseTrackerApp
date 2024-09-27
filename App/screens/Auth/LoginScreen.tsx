@@ -22,6 +22,7 @@ import Or from '@components/Or';
 import Text from '@components/Text';
 import { Colors } from 'App/constants/Colors';
 import { TouchableOpacity } from 'react-native';
+import { isValidEmail } from '@utils/isValidEmail';
 
 type AuthStackParamList = {
   Login: undefined;
@@ -37,7 +38,14 @@ const LoginScreen: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+
   const handleLogin = async () => {
+    if (!isValidEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+
     setLoading(true);
     try {
       await signIn(email, password);
@@ -69,6 +77,7 @@ const LoginScreen: React.FC = () => {
               <AuthHeader />
 
               <View style={styles.formContainer}>
+                {/* Google Sign-In Button */}
                 <TouchableOpacity
                   onPress={async () => {
                     await googleSignin();
@@ -80,6 +89,7 @@ const LoginScreen: React.FC = () => {
 
                 <Or />
 
+                {/* Email Input */}
                 <TextInput
                   autoFocus
                   mode="outlined"
@@ -90,17 +100,30 @@ const LoginScreen: React.FC = () => {
                   keyboardType="email-address"
                   placeholder="Type email"
                   style={styles.input}
+                  error={email.length > 0 && !isValidEmail(email)}
                 />
+                {email.length > 0 && !isValidEmail(email) && (
+                  <Text style={styles.errorText}>Please enter a valid email address.</Text>
+                )}
+
+                {/* Password Input with Toggle Visibility */}
                 <TextInput
                   mode="outlined"
                   label="Password"
                   placeholder="Type password"
                   value={password}
                   onChangeText={setPassword}
-                  secureTextEntry
+                  secureTextEntry={!passwordVisible}
                   style={styles.input}
+                  right={
+                    <TextInput.Icon
+                      icon={passwordVisible ? 'eye-off' : 'eye'}
+                      onPress={() => setPasswordVisible(!passwordVisible)}
+                    />
+                  }
                 />
 
+                {/* Login Button */}
                 <Button
                   onPress={handleLogin}
                   disabled={loading}
@@ -110,6 +133,7 @@ const LoginScreen: React.FC = () => {
                 </Button>
               </View>
 
+              {/* Footer */}
               <View style={styles.footer}>
                 <Text style={styles.notAmember}>Not A Member?</Text>
                 <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
@@ -142,6 +166,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     gap: 10,
+    marginTop: 20,
   },
   googleButton: {
     borderWidth: 1,
@@ -191,5 +216,11 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontWeight: '600',
     textAlign: 'center',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
   },
 });

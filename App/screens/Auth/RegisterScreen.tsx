@@ -120,6 +120,7 @@ const RegisterScreen: React.FC = () => {
                 onChangeText={setConfirmPassword}
                 secureTextEntry
                 style={styles.input}
+
               />
               <View style={styles.checkboxContainer}>
                 <TouchableOpacity
