@@ -6,6 +6,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
 import { addExpense, deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
 import { RootState } from '@store/store';
+import { filterTransactionsByMonth } from '@utils/filterTransactionsByMonth';
 import { mergeAndSortTransactions } from '@utils/transactionUtils';
 import { Colors } from 'App/constants/Colors';
 import moment from 'moment'; // Ensure moment is installed
@@ -50,9 +51,9 @@ const ExpenseListScreen: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   useEffect(() => {
-    applyFilter();
+    const filtered = filterTransactionsByMonth(expenses, appliedMonth);
+    setFilteredExpenses(filtered);
   }, [expenses, appliedMonth]);
-
   const openModal = (expense: ExpenseItem) => {
     setSelectedExpense(expense);
     setEditedName(expense.name);
@@ -131,21 +132,6 @@ const ExpenseListScreen: React.FC = () => {
     setNewAmount('');
     setAddModalVisible(false);
     setShowDatePicker(false);
-  };
-  // Function to apply month filter based on appliedMonth
-  const applyFilter = () => {
-    if (appliedMonth) {
-      const [year, month] = appliedMonth.split('-').map(Number);
-      const filtered = expenses.filter(expense => {
-        const expenseDate = moment(expense.date, 'YYYY-MM-DD');
-        return (
-          expenseDate.year() === year && expenseDate.month() + 1 === month // month is 0-indexed in moment
-        );
-      });
-      setFilteredExpenses(filtered as TransactionItem[]);
-    } else {
-      setFilteredExpenses(expenses as TransactionItem[]);
-    }
   };
 
   // Generate list of months from current to previous 12 months

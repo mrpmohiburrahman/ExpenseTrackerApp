@@ -5,6 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { addIncome, deleteIncome, editIncome } from '@store/slices/incomeSlice';
 import { RootState } from '@store/store';
+import { filterTransactionsByMonth } from '@utils/filterTransactionsByMonth';
 import { mergeAndSortTransactions } from '@utils/transactionUtils';
 import { Colors } from 'App/constants/Colors';
 import moment from 'moment';
@@ -45,7 +46,8 @@ const IncomeListScreen: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   useEffect(() => {
-    applyFilter();
+    const filtered = filterTransactionsByMonth(incomes, appliedMonth);
+    setFilteredIncomes(filtered);
   }, [incomes, appliedMonth]);
 
   const openModal = (income: TransactionItem) => {
@@ -122,18 +124,6 @@ const IncomeListScreen: React.FC = () => {
     setShowDatePicker(false);
   };
 
-  const applyFilter = () => {
-    if (appliedMonth) {
-      const [year, month] = appliedMonth.split('-').map(Number);
-      const filtered = incomes.filter(income => {
-        const incomeDate = moment(income.date, 'YYYY-MM-DD');
-        return incomeDate.year() === year && incomeDate.month() + 1 === month;
-      });
-      setFilteredIncomes(filtered as TransactionItem[]);
-    } else {
-      setFilteredIncomes(incomes as TransactionItem[]);
-    }
-  };
 
   const generateMonthOptions = () => {
     const months = [];
