@@ -28,42 +28,26 @@ const expenseNames = [
 
 // Generate random amounts for the expenses
 const getRandomAmount = () => {
-  return parseFloat((Math.random() * (1500 - 50) + 50).toFixed(2)); // Amount between 50 and 1500
+  return parseFloat((Math.random() * (500 - 100) + 100).toFixed(2)); // Amount between 100 and 500
 };
 
-// Action to add 20 expense items divided over several months
+// Action to add 2 expenses per week for the last 20 weeks
 export const addRandomExpenses = () => {
   const currentDate = moment(); // Current date using moment
-  const totalExpenses = 20;
-  const monthsToAdd = 10; // Adding items for the last 10 months
-  const minItemsPerMonth = 2;
+  const totalWeeks = 20;
 
-  const monthExpenses: Record<string, number> = {};
-
-  // Ensure at least 2 items per month
-  for (let i = 0; i < monthsToAdd; i++) {
-    const month = currentDate.clone().subtract(i, 'months').format('YYYY-MM');
-    monthExpenses[month] = minItemsPerMonth;
-  }
-
-  // Distribute the remaining items randomly over the months
-  let remainingItems = totalExpenses - monthsToAdd * minItemsPerMonth;
-  while (remainingItems > 0) {
-    const randomMonthIndex = Math.floor(Math.random() * monthsToAdd);
-    const month = currentDate.clone().subtract(randomMonthIndex, 'months').format('YYYY-MM');
-    monthExpenses[month]++;
-    remainingItems--;
-  }
-
-  // Add the items with random names, amounts, and proper dates
+  // Total expense items counter
   let expenseCounter = 0;
-  Object.keys(monthExpenses).forEach(month => {
-    for (let i = 0; i < monthExpenses[month]; i++) {
+
+  // Iterate through the last 20 weeks
+  for (let week = 0; week < totalWeeks; week++) {
+    // Generate 2 expenses for each week
+    for (let i = 0; i < 2; i++) {
+      const date = currentDate.clone().subtract(week, 'weeks').startOf('isoWeek').add(i, 'days').format('YYYY-MM-DD');
       const name = expenseNames[expenseCounter % expenseNames.length];
       const amount = getRandomAmount();
-      const date = moment(`${month}-01`).format('YYYY-MM-DD'); // First day of the month
-      store.dispatch(addExpense(name, date, amount));
+      store.dispatch(addExpense(name, date, amount)); // Dispatch expense with generated name, date, and amount
       expenseCounter++;
     }
-  });
+  }
 };

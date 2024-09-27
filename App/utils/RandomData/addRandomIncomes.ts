@@ -1,6 +1,6 @@
-import { addIncome } from '@store/slices/incomeSlice';
-import { store } from '@store/store';
 import moment from 'moment';
+import { store } from '@store/store';
+import { addIncome } from '@store/slices/incomeSlice';
 
 // Generate random names for the incomes
 const incomeNames = [
@@ -28,48 +28,26 @@ const incomeNames = [
 
 // Generate random amounts for the incomes
 const getRandomAmount = () => {
-  return parseFloat((Math.random() * (2000 - 100) + 100).toFixed(2)); // Amount between 100 and 2000
+  return parseFloat((Math.random() * (2000 - 1000) + 1000).toFixed(2)); // Amount between 1000 and 2000
 };
 
-// Action to add 20 income items divided over several months
+// Action to add 2 income items per week for the last 20 weeks
 export const addRandomIncomes = () => {
-  console.log('🚀 ~ addRandomIncomes ~ addRandomIncomes:1');
   const currentDate = moment(); // Current date using moment
-  const totalIncomes = 20;
-  const monthsToAdd = 10; // Adding items for the last 10 months
-  const minItemsPerMonth = 2;
+  const totalWeeks = 20;
 
-  const monthIncomes: Record<string, number> = {};
-
-  // Ensure at least 2 items per month
-  for (let i = 0; i < monthsToAdd; i++) {
-    const month = currentDate.clone().subtract(i, 'months').format('YYYY-MM');
-    monthIncomes[month] = minItemsPerMonth;
-  }
-
-  console.log('🚀 ~ addRandomIncomes ~ addRandomIncomes:2');
-  // Distribute the remaining items randomly over the months
-  let remainingItems = totalIncomes - monthsToAdd * minItemsPerMonth;
-  while (remainingItems > 0) {
-    const randomMonthIndex = Math.floor(Math.random() * monthsToAdd);
-    const month = currentDate.clone().subtract(randomMonthIndex, 'months').format('YYYY-MM');
-    monthIncomes[month]++;
-    remainingItems--;
-  }
-
-  console.log('🚀 ~ addRandomIncomes ~ addRandomIncomes:3');
-  // Add the items with random names, amounts, and proper dates
+  // Total income items counter
   let incomeCounter = 0;
-  Object.keys(monthIncomes).forEach(month => {
-    for (let i = 0; i < monthIncomes[month]; i++) {
+
+  // Iterate through the last 20 weeks
+  for (let week = 0; week < totalWeeks; week++) {
+    // Generate 2 incomes for each week
+    for (let i = 0; i < 2; i++) {
+      const date = currentDate.clone().subtract(week, 'weeks').startOf('isoWeek').add(i, 'days').format('YYYY-MM-DD');
       const name = incomeNames[incomeCounter % incomeNames.length];
       const amount = getRandomAmount();
-      const date = moment(`${month}-01`).format('YYYY-MM-DD'); // First day of the month
-      console.log('🚀 ~ addRandomIncomes ~ addRandomIncomes:4');
-      store.dispatch(addIncome(name, date, amount));
-      console.log('🚀 ~ addRandomIncomes ~ addRandomIncomes:5');
+      store.dispatch(addIncome(name, date, amount)); // Dispatch income with generated name, date, and amount
       incomeCounter++;
     }
-  });
-  console.log('🚀 ~ addRandomIncomes ~ addRandomIncomes:6');
+  }
 };

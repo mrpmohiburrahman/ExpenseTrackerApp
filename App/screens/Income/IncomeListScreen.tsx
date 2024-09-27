@@ -26,6 +26,7 @@ import {
 } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 import { useDispatch, useSelector } from 'react-redux';
+import { addRandomFinancials } from '@utils/RandomData/addRandomFinancials';
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -206,15 +207,16 @@ const IncomeListScreen: React.FC = () => {
   }, [filteredIncomes]);
   return (
     <View style={styles.container}>
-      {/* <Button
+      <Button
         title="cleare income and expnse"
         onPress={() => {
           dispatch(clearIncomes());
           dispatch(clearExpenses());
           addRandomIncomes();
           addRandomExpenses();
+          // addRandomFinancials();
         }}
-      /> */}
+      />
       <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
         <PieChart
           showText
