@@ -1,16 +1,14 @@
-import { BlurMask, Circle, Group, LinearGradient, RoundedRect, Shadow, useFont, vec } from '@shopify/react-native-skia';
+import { Circle, Group, LinearGradient, RoundedRect, Shadow, useFont, vec } from '@shopify/react-native-skia';
 import * as React from 'react';
-import { FlatList, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
+import { SafeAreaView, View } from 'react-native';
+import { useDerivedValue } from 'react-native-reanimated';
 import { Bar, CartesianChart, Line, useChartPressState } from 'victory-native';
 
-import { Text as SKText } from '@shopify/react-native-skia';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from 'App/constants/metrics';
-import { moderateScale } from 'react-native-size-matters';
-import { getBalanceByPeriod } from '@utils/balanceUtils';
-import { getChartData } from '@utils/chartDataUtils';
+import PeriodSelector from '@components/PeriodSelector';
 import Text from '@components/Text';
-import { Colors } from 'App/constants/Colors';
+import { Text as SKText } from '@shopify/react-native-skia';
+import { getChartData } from '@utils/chartDataUtils';
+import { SCREEN_HEIGHT } from 'App/constants/metrics';
 
 const DATA = (length: number = 10) =>
   Array.from({ length }, (_, index) => ({
@@ -66,33 +64,6 @@ export default function GettingStartedScreen(props: { segment: string }) {
 
   const [selectedId, setSelectedId] = React.useState<'Day' | 'Week' | 'Month' | 'Year'>('Week');
 
-  const renderItem = ({
-    item,
-  }: {
-    item: { id: 'Day' | 'Week' | 'Month' | 'Year'; title: 'Day' | 'Week' | 'Month' | 'Year' };
-  }) => {
-    const backgroundColor = selectedId === item.id ? Colors.primary : Colors.white;
-    const textColor = selectedId === item.id ? '#fff' : '#ADAFBD';
-
-    return (
-      <TouchableOpacity
-        onPress={() => setSelectedId(item.id)}
-        style={[
-          {
-            height: 40, // Set the height of each item
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginHorizontal: 5,
-            borderRadius: 60,
-            width: SCREEN_WIDTH / 4 - 20,
-          },
-          { backgroundColor },
-        ]}>
-        <Text style={{ fontSize: 14, color: textColor }}>{item.title}</Text>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <SafeAreaView
       style={{
@@ -106,22 +77,7 @@ export default function GettingStartedScreen(props: { segment: string }) {
         <View style={{ paddingLeft: 10, paddingVertical: 20 }}>
           <Text style={{ color: '#363B64', fontSize: 24, fontWeight: '700' }}>Your Revenue</Text>
         </View>
-        <FlatList
-          data={[
-            { id: 'Day', title: 'Day' },
-            { id: 'Week', title: 'Week' },
-            { id: 'Month', title: 'Month' },
-            { id: 'Year', title: 'Year' },
-          ]}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            width: SCREEN_WIDTH,
-            height: 40,
-          }}
-        />
+        <PeriodSelector selectedId={selectedId} onSelect={setSelectedId} />
       </View>
 
       <View
