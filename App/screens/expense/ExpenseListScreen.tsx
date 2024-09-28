@@ -1,5 +1,6 @@
 import HeaderWithActions from '@components/HeaderWithActions';
 import ListEmptyScreen from '@components/ListEmptyScreen';
+import TransactionHeaderWithChart from '@components/TransactionHeaderWithChart';
 import TransactionList, { TransactionItem } from '@components/TransactionList';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
@@ -128,45 +129,34 @@ const ExpenseListScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        keyExtractor={item => item.toString()}
         data={[0, 1]}
-        ListEmptyComponent={ListEmptyScreen}
+        keyExtractor={item => item.toString()}
         renderItem={({ index }) => {
           if (index === 0) {
             if (filteredExpenses && filteredExpenses.length !== 0) {
               return (
-                <>
-                  {/* Pie Chart */}
-                  <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                    {pieData.length > 0 ? (
-                      <PieChart showText textColor="white" radius={150} textSize={20} data={pieData} />
-                    ) : (
-                      <Text style={styles.noDataText}>No expenses for selected month.</Text>
-                    )}
-                  </View>
-
-                  {/* Reusable Header with Actions */}
-                  <HeaderWithActions
-                    filterTitle={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
-                    onFilterPress={() => {
-                      setSelectedMonth(appliedMonth);
-                      setFilterModalVisible(true);
-                    }}
-                    addButtonTitle="+Add Expense"
-                    onAddPress={() => {
-                      setAddModalVisible(true);
-                    }}
-                  />
-                </>
+                <TransactionHeaderWithChart
+                  pieData={pieData}
+                  appliedMonth={appliedMonth}
+                  onFilterPress={() => {
+                    setSelectedMonth(appliedMonth);
+                    setFilterModalVisible(true);
+                  }}
+                  onAddPress={() => {
+                    setAddModalVisible(true);
+                  }}
+                  addButtonTitle="+Add Expense"
+                  emptyMessage="No expenses for selected month."
+                />
               );
-            } else return <ListEmptyScreen />;
+            } else {
+              return <ListEmptyScreen />;
+            }
           } else if (index === 1) {
-            return (
-              <>
-                <TransactionList data={filteredExpenses} onItemPress={openModal} type="expense" />
-              </>
-            );
-          } else return <View />;
+            return <TransactionList data={filteredExpenses} onItemPress={openModal} type="expense" />;
+          } else {
+            return <View />;
+          }
         }}
       />
 

@@ -1,6 +1,7 @@
 import HeaderWithActions from '@components/HeaderWithActions';
 import ListEmptyScreen from '@components/ListEmptyScreen';
 import Text from '@components/Text';
+import TransactionHeaderWithChart from '@components/TransactionHeaderWithChart';
 import TransactionList, { TransactionItem } from '@components/TransactionList';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
@@ -129,32 +130,27 @@ const IncomeListScreen: React.FC = () => {
           if (index === 0) {
             if (filteredIncomes && filteredIncomes.length !== 0) {
               return (
-                <>
-                  <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                    <PieChart showText textColor="white" radius={150} textSize={20} data={pieData} />
-                  </View>
-                  {/* Reusable Header with Actions */}
-                  <HeaderWithActions
-                    filterTitle={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
-                    onFilterPress={() => {
-                      setSelectedMonth(appliedMonth);
-                      setFilterModalVisible(true);
-                    }}
-                    addButtonTitle="+Add Income"
-                    onAddPress={() => {
-                      setAddModalVisible(true);
-                    }}
-                  />
-                </>
+                <TransactionHeaderWithChart
+                  pieData={pieData}
+                  appliedMonth={appliedMonth}
+                  onFilterPress={() => {
+                    setSelectedMonth(appliedMonth);
+                    setFilterModalVisible(true);
+                  }}
+                  onAddPress={() => {
+                    setAddModalVisible(true);
+                  }}
+                  addButtonTitle="+Add Income"
+                />
               );
-            } else return <ListEmptyScreen />;
-          } else if (index === 1)
-            return (
-              <>
-                <TransactionList data={filteredIncomes} onItemPress={openModal} type="income" />
-              </>
-            );
-          else return <View />;
+            } else {
+              return <ListEmptyScreen />;
+            }
+          } else if (index === 1) {
+            return <TransactionList data={filteredIncomes} onItemPress={openModal} type="income" />;
+          } else {
+            return <View />;
+          }
         }}
       />
 
