@@ -1,4 +1,5 @@
 import HeaderWithActions from '@components/HeaderWithActions';
+import ListEmptyScreen from '@components/ListEmptyScreen';
 import Text from '@components/Text';
 import TransactionList, { TransactionItem } from '@components/TransactionList';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -123,33 +124,37 @@ const IncomeListScreen: React.FC = () => {
     <View style={styles.container}>
       <FlatList
         data={[0, 1]}
+        keyExtractor={item => item.toString()}
         renderItem={({ index }) => {
-          if (index === 0)
-            return (
-              <>
-                <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                  <PieChart showText textColor="white" radius={150} textSize={20} data={pieData} />
-                </View>
-                {/* Reusable Header with Actions */}
-                <HeaderWithActions
-                  filterTitle={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
-                  onFilterPress={() => {
-                    setSelectedMonth(appliedMonth);
-                    setFilterModalVisible(true);
-                  }}
-                  addButtonTitle="+Add Income"
-                  onAddPress={() => {
-                    setAddModalVisible(true);
-                  }}
-                />
-              </>
-            );
-          else if (index === 1)
+          if (index === 0) {
+            if (filteredIncomes && filteredIncomes.length !== 0) {
+              return (
+                <>
+                  <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+                    <PieChart showText textColor="white" radius={150} textSize={20} data={pieData} />
+                  </View>
+                  {/* Reusable Header with Actions */}
+                  <HeaderWithActions
+                    filterTitle={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
+                    onFilterPress={() => {
+                      setSelectedMonth(appliedMonth);
+                      setFilterModalVisible(true);
+                    }}
+                    addButtonTitle="+Add Income"
+                    onAddPress={() => {
+                      setAddModalVisible(true);
+                    }}
+                  />
+                </>
+              );
+            } else return <ListEmptyScreen />;
+          } else if (index === 1)
             return (
               <>
                 <TransactionList data={filteredIncomes} onItemPress={openModal} type="income" />
               </>
             );
+          else return <View />;
         }}
       />
 
