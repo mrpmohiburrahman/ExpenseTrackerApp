@@ -5,9 +5,11 @@ import { clearExpenses } from '@store/slices/expenseSlice';
 import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
 import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
 import { useDispatch } from 'react-redux';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from 'App/constants/metrics';
-import { Colors } from 'App/constants/Colors';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '@constants/metrics';
+import { Colors } from '@constants/Colors';
 import Text from './Text';
+import { mergeAndSortTransactions } from '@utils/mergeAndSortTransactions';
+import { clearAllSortedTransactions } from '@store/slices/allTransactionSlice';
 
 const ListEmptyScreen = () => {
   const dispatch = useDispatch();
@@ -33,9 +35,10 @@ const ListEmptyScreen = () => {
         onPress={() => {
           dispatch(clearIncomes());
           dispatch(clearExpenses());
+          dispatch(clearAllSortedTransactions());
           addRandomIncomes();
           addRandomExpenses();
-          // addRandomFinancials();
+          mergeAndSortTransactions();
         }}>
         <Text>Press here to populate with data</Text>
       </TouchableOpacity>

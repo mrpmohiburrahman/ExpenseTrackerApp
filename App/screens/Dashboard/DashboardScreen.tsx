@@ -8,7 +8,7 @@ import Text from '@components/Text';
 import TransactionList from '@components/TransactionList';
 import { selectAllSortedTransactions } from '@store/slices/allTransactionSlice';
 import VectorIcon from '@utils/VectorIcons';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 import { useSelector } from 'react-redux';
 
 export default function DashboardScreen(props: { segment: string }) {
@@ -19,7 +19,7 @@ export default function DashboardScreen(props: { segment: string }) {
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
         data={[0, 1]}
-        // extraData={selectedPeriod}
+        extraData={sortedTransactions}
         ListHeaderComponent={() => {
           if (!sortedTransactions || sortedTransactions.length === 0) return <ListEmptyScreen />;
         }}

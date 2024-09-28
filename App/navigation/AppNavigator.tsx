@@ -5,7 +5,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from '../context/AuthContext';
 import RootNavigator from './RootNavigator';
 import { Provider } from 'react-redux';
-import { persistor, store } from '@store/store';
+import { persistor, store } from '../store/store';
+
 import { PersistGate } from 'redux-persist/integration/react';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 

@@ -4,7 +4,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import VectorIcon from '@utils/VectorIcons'; // Adjust the path if necessary
 import { useNavigation } from '@react-navigation/native';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 
 const NotificationButton: React.FC = () => {
   const navigation = useNavigation();

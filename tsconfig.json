@@ -14,63 +14,66 @@
     "baseUrl": "./",
     "paths": {
       "@api/*": [
-        "App/api/*"
+        "app/api/*"
       ],
       "@assets/*": [
-        "App/assets/*"
+        "app/assets/*"
       ],
       "@components/*": [
-        "App/components/*"
+        "app/components/*"
+      ],
+      "@constants/*": [
+        "app/constants/*"
       ],
       "@config/*": [
-        "App/config/*"
+        "app/config/*"
       ],
-      "@contexts/*": [
-        "App/contexts/*"
+      "@context/*": [
+        "app/context/*"
       ],
       "@data/*": [
-        "App/data/*"
+        "app/data/*"
       ],
       "@hooks/*": [
-        "App/hooks/*"
+        "app/hooks/*"
       ],
       "@i18n/*": [
-        "App/i18n/*"
+        "app/i18n/*"
       ],
       "@lang/*": [
-        "App/lang/*"
+        "app/lang/*"
       ],
       "@lib/*": [
-        "App/lib/*"
+        "app/lib/*"
       ],
       "@modals/*": [
-        "App/modals/*"
+        "app/modals/*"
       ],
       "@navigation/*": [
-        "App/navigation/*"
+        "app/navigation/*"
       ],
       "@realmApi/*": [
-        "App/realmApi/*"
+        "app/realmApi/*"
       ],
       "@schemas/*": [
-        "App/schemas/*"
+        "app/schemas/*"
       ],
       "@screens/*": [
-        "App/screens/*"
+        "app/screens/*"
       ],
       "@services/*": [
-        "App/services/*"
+        "app/services/*"
       ],
       "@store/*": [
-        "App/store/*"
+        "app/store/*"
       ],
       "@styles/*": [
-        "App/styles/*"
+        "app/styles/*"
       ],
       "@utils/*": [
-        "App/utils/*"
+        "app/utils/*"
       ]
-    }
+    },
   },
   "exclude": [
     "node_modules",

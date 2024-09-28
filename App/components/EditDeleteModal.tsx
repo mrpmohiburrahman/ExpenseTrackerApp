@@ -1,7 +1,7 @@
 // components/modals/EditDeleteModal.tsx
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TextInput, StyleSheet, Alert, TouchableWithoutFeedback } from 'react-native';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 import { validateTransactionInput } from '@utils/validateTransactionInput';
 import { Button } from 'react-native-paper';
 

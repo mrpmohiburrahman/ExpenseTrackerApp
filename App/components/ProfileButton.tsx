@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native';
 import VectorIcon from '@utils/VectorIcons'; // Adjust the path as needed
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 
 const ProfileButton: React.FC = () => {
   const navigation = useNavigation();

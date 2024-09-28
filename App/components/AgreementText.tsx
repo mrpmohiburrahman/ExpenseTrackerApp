@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import React from 'react';
 import Text from './Text';
-import { SCREEN_WIDTH } from 'App/constants/metrics';
+import { SCREEN_WIDTH } from '@constants/metrics';
 
 const AgreementText = () => {
   return (

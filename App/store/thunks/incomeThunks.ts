@@ -1,5 +1,5 @@
 // src/store/thunks/incomeThunks.ts
-import { AppDispatch, RootState } from '@store/store';
+import { AppDispatch, RootState, store } from '@store/store';
 import { addIncome } from '@store/slices/incomeSlice';
 import { mergeAndSortTransactions } from '@utils/mergeAndSortTransactions';
 import { getBalanceByPeriod } from '@utils/balanceUtils';
@@ -23,4 +23,18 @@ export const addIncomeAndMerge = (name: string, date: string, amount: number) =>
     dispatch(setChartDataMonthly(chartDataMonthly));
     dispatch(setChartDataYearly(chartDataYearly));
   };
+};
+
+export const syncReducer = async () => {
+  await mergeAndSortTransactions();
+  const balances = getBalanceByPeriod();
+  store.dispatch(setBalances(balances));
+  // Compute chart data
+  const chartDataWeekly = getChartedByPeriod('Week', balances, 5);
+  const chartDataMonthly = getChartedByPeriod('Month', balances, 5);
+  const chartDataYearly = getChartedByPeriod('Year', balances, 5);
+
+  store.dispatch(setChartDataWeekly(chartDataWeekly));
+  store.dispatch(setChartDataMonthly(chartDataMonthly));
+  store.dispatch(setChartDataYearly(chartDataYearly));
 };

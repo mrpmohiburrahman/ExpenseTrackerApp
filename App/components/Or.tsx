@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import React from 'react';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 import Text from './Text';
 
 const Or = () => (

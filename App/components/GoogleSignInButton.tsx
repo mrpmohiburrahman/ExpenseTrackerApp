@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
-import { Colors } from 'App/constants/Colors';
-import { useAuth } from 'App/context/AuthContext';
+import { Colors } from '@constants/Colors';
+import { useAuth } from '@context/AuthContext';
 
 const GoogleSignInButton = () => {
   const { googleSignin } = useAuth();
@@ -22,7 +22,7 @@ const GoogleSignInButton = () => {
         flexDirection: 'row',
         gap: 10,
       }}>
-      <Image source={require('App/assets/google.png')} style={{ height: 20, width: 20 }} />
+      <Image source={require('../assets/google.png')} style={{ height: 20, width: 20 }} />
       <Text style={{ color: Colors.signinSub, fontSize: 13 }}>Continue with google</Text>
     </TouchableOpacity>
   );

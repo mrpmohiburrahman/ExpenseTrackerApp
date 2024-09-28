@@ -1,4 +1,3 @@
-
 // App/navigation/AuthStack.tsx
 
 import React from 'react';

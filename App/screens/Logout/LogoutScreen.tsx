@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { useAuth } from 'App/context/AuthContext';
+import { useAuth } from '@context/AuthContext';
 
 const LogoutScreen: React.FC = () => {
   const { signOut } = useAuth();

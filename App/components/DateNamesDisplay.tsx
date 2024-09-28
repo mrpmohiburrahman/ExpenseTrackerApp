@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Text from '@components/Text';
-import { Colors } from 'App/constants/Colors';
-import { SCREEN_WIDTH } from 'App/constants/metrics';
+import { Colors } from '@constants/Colors';
+import { SCREEN_WIDTH } from '@constants/metrics';
 
 type DateNamesDisplayProps = {
   selectedPeriod: string;

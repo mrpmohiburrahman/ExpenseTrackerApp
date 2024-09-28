@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -20,10 +20,17 @@ import { useAuth } from '../../context/AuthContext';
 import AuthHeader from '@components/AuthHeader';
 import Or from '@components/Or';
 import Text from '@components/Text';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 import { TouchableOpacity } from 'react-native';
 import { isValidEmail } from '@utils/isValidEmail';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
+import { clearIncomes } from '@store/slices/incomeSlice';
+import { clearExpenses } from '@store/slices/expenseSlice';
+import { clearAllSortedTransactions } from '@store/slices/allTransactionSlice';
+import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
+import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
+import { mergeAndSortTransactions } from '@utils/mergeAndSortTransactions';
 
 type AuthStackParamList = {
   Login: undefined;
@@ -40,6 +47,15 @@ const LoginScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(clearIncomes());
+    dispatch(clearExpenses());
+    dispatch(clearAllSortedTransactions());
+    addRandomIncomes();
+    addRandomExpenses();
+    mergeAndSortTransactions();
+  }, []);
 
   const handleLogin = async () => {
     if (!isValidEmail(email)) {
@@ -84,7 +100,7 @@ const LoginScreen: React.FC = () => {
                     await googleSignin();
                   }}
                   style={styles.googleButton}>
-                  <Image source={require('App/assets/google.png')} style={styles.googleImage} />
+                  <Image source={require('app/assets/google.png')} style={styles.googleImage} />
                   <Text style={styles.googleText}>Continue with Google</Text>
                 </TouchableOpacity>
 

@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native';
 import React from 'react';
-import { Colors } from 'App/constants/Colors';
-import { SCREEN_WIDTH } from 'App/constants/metrics';
+import { Colors } from '@constants/Colors';
+import { SCREEN_WIDTH } from '@constants/metrics';
 
 const AuthHeader = () => {
   return (

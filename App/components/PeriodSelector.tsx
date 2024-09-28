@@ -2,8 +2,8 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View } from 'react-native';
 import Text from '@components/Text';
-import { SCREEN_WIDTH } from 'App/constants/metrics';
-import { Colors } from 'App/constants/Colors';
+import { SCREEN_WIDTH } from '@constants/metrics';
+import { Colors } from '@constants/Colors';
 
 interface Period {
   id: 'Week' | 'Month' | 'Year';

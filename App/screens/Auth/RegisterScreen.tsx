@@ -13,16 +13,20 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import Text from '@components/Text';
+// import Text from '@components/Text';
+
 import AuthHeader from '@components/AuthHeader';
 import Or from '@components/Or';
 import { Button, TextInput } from 'react-native-paper';
 import GoogleSignInButton from '@components/GoogleSignInButton';
-import { Colors } from 'App/constants/Colors';
+// import { Colors } from '@constants/Colors';
+
 import AgreementText from '@components/AgreementText';
 import VectorIcon from '@utils/VectorIcons';
 import { isValidEmail } from '@utils/isValidEmail';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Text from '@components/Text';
+import { Colors } from '@constants/Colors';
 
 type AuthStackParamList = {
   Login: undefined;

@@ -3,7 +3,7 @@ import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 import HeaderWithActions from '@components/HeaderWithActions';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 import moment from 'moment';
 
 interface TransactionHeaderWithChartProps {

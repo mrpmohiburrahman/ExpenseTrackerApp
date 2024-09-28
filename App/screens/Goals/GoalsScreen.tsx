@@ -1,13 +1,14 @@
-import { View, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { Colors } from 'App/constants/Colors';
-import { clearIncomes } from '@store/slices/incomeSlice';
-import { clearExpenses } from '@store/slices/expenseSlice';
-import { useDispatch } from 'react-redux';
-import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
-import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
-import { clearAllSortedTransactions } from '@store/slices/allTransactionSlice';
 import Text from '@components/Text';
+import { clearAllSortedTransactions } from '@store/slices/allTransactionSlice';
+import { clearExpenses } from '@store/slices/expenseSlice';
+import { clearIncomes } from '@store/slices/incomeSlice';
+import { mergeAndSortTransactions } from '@utils/mergeAndSortTransactions';
+import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
+import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
+import { Colors } from '@constants/Colors';
+import React from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 const GoalsScreen = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const GoalsScreen = () => {
           dispatch(clearAllSortedTransactions());
           addRandomIncomes();
           addRandomExpenses();
+          mergeAndSortTransactions();
 
           // addRandomFinancials();
         }}>

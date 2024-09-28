@@ -1,7 +1,7 @@
 // utils/chartUtils.ts
 import { TransactionItem } from '@components/TransactionList';
 import { truncateToOneWord } from './truncateToOneWord';
-import { additionalColors, colorList } from 'App/constants/Colors';
+import { additionalColors, colorList } from '@constants/Colors';
 
 interface PieChartData {
   value: number;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 import moment from 'moment';
 import { Picker } from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';

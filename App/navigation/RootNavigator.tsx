@@ -1,7 +1,8 @@
 // App/navigation/RootNavigator.tsx
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useAuth } from 'App/context/AuthContext';
+// import { useAuth } from 'App/context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import React from 'react';
 import AuthStack from './AuthStack';
 import DrawerNavigator from './DrawerNavigator';

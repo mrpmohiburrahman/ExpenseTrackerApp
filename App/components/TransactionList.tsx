@@ -3,7 +3,7 @@ import Text from '@components/Text';
 import { View, TouchableOpacity, FlatList, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import moment from 'moment';
 import { moderateScale } from 'react-native-size-matters';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 
 export type TransactionItem = {
   id: string;

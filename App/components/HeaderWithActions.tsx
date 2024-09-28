@@ -3,7 +3,7 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import VectorIcon from '@utils/VectorIcons'; // Assuming you already have this utility
 import { moderateScale } from 'react-native-size-matters';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 
 interface HeaderWithActionsProps {
   filterTitle: string;

@@ -14,6 +14,7 @@ import AddModal from '@components/AddModal';
 import FilterModal from '@components/FilterModal';
 import { filterTransactionsByMonth } from '@utils/filterTransactionsByMonth';
 import { generateLast12Months } from '@utils/dateUtils';
+import { syncReducer } from '@store/thunks/incomeThunks';
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ const IncomeListScreen: React.FC = () => {
 
   const pieData = useMemo(() => generatePieChartData(filteredIncomes), [filteredIncomes]);
 
-  const handleEditSave = (data: { name: string; date: string; amount: number }) => {
+  const handleEditSave = async (data: { name: string; date: string; amount: number }) => {
     if (selectedIncome) {
       dispatch(
         editIncome({
@@ -46,20 +47,23 @@ const IncomeListScreen: React.FC = () => {
       );
       setEditModalVisible(false);
       setSelectedIncome(null);
+      await syncReducer();
     }
   };
 
-  const handleEditDelete = () => {
+  const handleEditDelete = async () => {
     if (selectedIncome) {
       dispatch(deleteIncome(selectedIncome.id));
       setEditModalVisible(false);
       setSelectedIncome(null);
+      await syncReducer();
     }
   };
 
-  const handleAdd = (data: { name: string; date: string; amount: number }) => {
+  const handleAdd = async (data: { name: string; date: string; amount: number }) => {
     dispatch(addIncome(data.name, data.date, data.amount));
     setAddModalVisible(false);
+    await syncReducer();
   };
 
   const handleApplyFilter = (month: string) => {

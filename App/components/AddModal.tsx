@@ -13,7 +13,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Colors } from 'App/constants/Colors';
+import { Colors } from '@constants/Colors';
 import moment from 'moment';
 import { validateTransactionInput } from '@utils/validateTransactionInput';
 

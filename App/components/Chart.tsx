@@ -8,7 +8,7 @@ import useChartData from '@hooks/useChartData';
 import useChartDerivedValues from '@hooks/useChartDerivedValues';
 import useDateNames from '@hooks/useDateNames';
 import { Text as SKText } from '@shopify/react-native-skia';
-import { SCREEN_HEIGHT } from 'App/constants/metrics';
+import { SCREEN_HEIGHT } from '@constants/metrics';
 import DateNamesDisplay from './DateNamesDisplay';
 
 type ChartType = { selectedPeriod: any };
@@ -45,13 +45,11 @@ const Chart = ({ selectedPeriod }: ChartType) => {
           height: SCREEN_HEIGHT * 0.33,
         }}>
         <CartesianChart
-        
           data={data}
           xKey={'month'}
           yKeys={['listenCount', 'specialCount']}
           domainPadding={{ left: 40, right: 40, top: 30 }}
           xAxis={{
-            
             // font: toolTipFont,
             lineWidth: 0,
             labelPosition: 'outset',
