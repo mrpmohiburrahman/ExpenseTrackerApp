@@ -1,17 +1,9 @@
 // components/modals/EditDeleteModal.tsx
 import React, { useState, useEffect } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  Alert,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { Modal, View, Text, TextInput, StyleSheet, Alert, TouchableWithoutFeedback } from 'react-native';
 import { Colors } from 'App/constants/Colors';
 import { validateTransactionInput } from '@utils/validateTransactionInput';
+import { Button } from 'react-native-paper';
 
 interface EditDeleteModalProps {
   visible: boolean;
@@ -66,12 +58,7 @@ const EditDeleteModal: React.FC<EditDeleteModalProps> = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="fade" transparent={true} onRequestClose={onClose}>
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalBackdrop}>
           <TouchableWithoutFeedback>
@@ -100,9 +87,16 @@ const EditDeleteModal: React.FC<EditDeleteModalProps> = ({
                 placeholderTextColor={Colors.placeholder}
               />
               <View style={styles.modalButtonContainer}>
-                <Button title="Save" onPress={handleSave} />
-                <Button title="Delete" color="red" onPress={onDelete} />
-                <Button title="Cancel" onPress={onClose} />
+                <Button mode="contained" onPress={handleSave} textColor="white">
+                  save
+                </Button>
+                <Button mode="contained" onPress={onDelete} textColor="white" buttonColor="maroon">
+                  Delete
+                </Button>
+
+                <Button mode="contained" onPress={onClose} textColor="white" buttonColor="grey">
+                  Cancel
+                </Button>
               </View>
             </View>
           </TouchableWithoutFeedback>

@@ -1,4 +1,3 @@
-// screens/IncomeListScreen.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Button, FlatList, StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,10 +14,6 @@ import AddModal from '@components/AddModal';
 import FilterModal from '@components/FilterModal';
 import { filterTransactionsByMonth } from '@utils/filterTransactionsByMonth';
 import { generateLast12Months } from '@utils/dateUtils';
-
-// import EditDeleteModal from '@components/modals/EditDeleteModal';
-// import AddModal from '@components/modals/AddModal';
-// import FilterModal from '@components/modals/FilterModal';
 
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();

@@ -1,11 +1,9 @@
-// screens/ExpenseListScreen.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Button, FlatList, StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { RootState } from '@store/store';
 import { addExpense, deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
-// import { generateLast12Months, filterTransactionsByMonth } from '@utils';
 
 import { generatePieChartData } from '@utils/chartUtils';
 import TransactionHeaderWithChart from '@components/TransactionHeaderWithChart';
@@ -16,10 +14,6 @@ import FilterModal from '@components/FilterModal';
 import AddModal from '@components/AddModal';
 import { filterTransactionsByMonth } from '@utils/filterTransactionsByMonth';
 import { generateLast12Months } from '@utils/dateUtils';
-
-// import EditDeleteModal from '@components/modals/EditDeleteModal';
-// import AddModal from '@components/modals/AddModal';
-// import FilterModal from '@components/modals/FilterModal';
 
 const ExpenseListScreen: React.FC = () => {
   const dispatch = useDispatch();

@@ -1,9 +1,9 @@
-// components/modals/FilterModal.tsx
 import React from 'react';
-import { Modal, View, Text, Button, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Colors } from 'App/constants/Colors';
 import moment from 'moment';
 import { Picker } from '@react-native-picker/picker';
+import { Button } from 'react-native-paper';
 
 interface FilterModalProps {
   visible: boolean;
@@ -39,8 +39,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 ))}
               </Picker>
               <View style={styles.modalButtonContainer}>
-                <Button title="Apply" onPress={() => onApply(selectedMonth)} />
-                <Button title="Cancel" onPress={onClose} />
+                <Button mode="contained" onPress={() => onApply(selectedMonth)} textColor="white">
+                  Apply
+                </Button>
+                <Button mode="contained" onPress={onClose} textColor="white" buttonColor="grey">
+                  Cancel
+                </Button>
               </View>
             </View>
           </TouchableWithoutFeedback>
