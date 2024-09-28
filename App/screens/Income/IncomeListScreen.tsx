@@ -1,126 +1,82 @@
-import HeaderWithActions from '@components/HeaderWithActions';
-import ListEmptyScreen from '@components/ListEmptyScreen';
-import Text from '@components/Text';
+// screens/IncomeListScreen.tsx
+import React, { useEffect, useMemo, useState } from 'react';
+import { Alert, Button, FlatList, StyleSheet, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
+import { RootState } from '@store/store';
+import { addIncome, deleteIncome, editIncome } from '@store/slices/incomeSlice';
+
+import { generatePieChartData } from '@utils/chartUtils';
 import TransactionHeaderWithChart from '@components/TransactionHeaderWithChart';
 import TransactionList, { TransactionItem } from '@components/TransactionList';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
-import { validateInterpolationOptions } from '@shopify/react-native-skia';
-import { addIncome, deleteIncome, editIncome } from '@store/slices/incomeSlice';
-import { RootState } from '@store/store';
-import { generatePieChartData } from '@utils/chartUtils';
-import { generateLast12Months } from '@utils/dateUtils';
+import ListEmptyScreen from '@components/ListEmptyScreen';
+import EditDeleteModal from '@components/EditDeleteModal';
+import AddModal from '@components/AddModal';
+import FilterModal from '@components/FilterModal';
 import { filterTransactionsByMonth } from '@utils/filterTransactionsByMonth';
-import { mergeAndSortTransactions } from '@utils/transactionUtils';
-import { validateTransactionInput } from '@utils/validateTransactionInput';
-import { Colors } from 'App/constants/Colors';
-import moment from 'moment';
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Alert,
-  Button,
-  FlatList,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { PieChart } from 'react-native-gifted-charts';
-import { useDispatch, useSelector } from 'react-redux';
+import { generateLast12Months } from '@utils/dateUtils';
 
-const monthOptions = generateLast12Months();
+// import EditDeleteModal from '@components/modals/EditDeleteModal';
+// import AddModal from '@components/modals/AddModal';
+// import FilterModal from '@components/modals/FilterModal';
+
 const IncomeListScreen: React.FC = () => {
   const dispatch = useDispatch();
   const incomes = useSelector((state: RootState) => state.income.incomes);
 
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [selectedIncome, setSelectedIncome] = useState<TransactionItem | null>(null);
-  const [editedName, setEditedName] = useState<string>('');
-  const [editedDate, setEditedDate] = useState<string>('');
-  const [editedAmount, setEditedAmount] = useState<string>('');
 
-  const [filterModalVisible, setFilterModalVisible] = useState<boolean>(false);
+  const [isAddModalVisible, setAddModalVisible] = useState(false);
+
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('YYYY-MM'));
   const [appliedMonth, setAppliedMonth] = useState<string>(moment().format('YYYY-MM'));
-  const [filteredIncomes, setFilteredIncomes] = useState<TransactionItem[]>([]);
 
-  const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
-  const [newName, setNewName] = useState<string>('');
-  const [newDate, setNewDate] = useState<string>(moment().format('YYYY-MM-DD'));
-  const [newAmount, setNewAmount] = useState<string>('');
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const monthOptions = generateLast12Months();
 
-  useEffect(() => {
-    const filtered = filterTransactionsByMonth(incomes, appliedMonth);
-    setFilteredIncomes(filtered);
-  }, [incomes, appliedMonth]);
+  const filteredIncomes = useMemo(() => filterTransactionsByMonth(incomes, appliedMonth), [incomes, appliedMonth]);
 
-  const openModal = (income: TransactionItem) => {
-    setSelectedIncome(income);
-    setEditedName(income.name);
-    setEditedDate(income.date);
-    setEditedAmount(income.amount.toString());
-    setModalVisible(true);
-  };
+  const pieData = useMemo(() => generatePieChartData(filteredIncomes), [filteredIncomes]);
 
-  const handleSave = () => {
+  const handleEditSave = (data: { name: string; date: string; amount: number }) => {
     if (selectedIncome) {
-      const error = validateTransactionInput(editedName, editedDate, editedAmount);
-      if (error) {
-        Alert.alert('Error', error);
-        return;
-      }
-
       dispatch(
         editIncome({
           id: selectedIncome.id,
-          name: editedName,
-          date: editedDate,
-          amount: parseFloat(editedAmount),
+          name: data.name,
+          date: data.date,
+          amount: data.amount,
         })
       );
-      setModalVisible(false);
+      setEditModalVisible(false);
       setSelectedIncome(null);
     }
   };
 
-  const handleDelete = () => {
+  const handleEditDelete = () => {
     if (selectedIncome) {
       dispatch(deleteIncome(selectedIncome.id));
-      setModalVisible(false);
+      setEditModalVisible(false);
       setSelectedIncome(null);
     }
   };
 
-  const handleAddIncome = () => {
-    const error = validateTransactionInput(newName, newDate, newAmount);
-    if (error) {
-      Alert.alert('Error', error);
-      return;
-    }
-
-    dispatch(addIncome(newName, newDate, parseFloat(newAmount)));
-
-    mergeAndSortTransactions();
-
-    setNewName('');
-    setNewDate(moment().format('YYYY-MM-DD'));
-    setNewAmount('');
+  const handleAdd = (data: { name: string; date: string; amount: number }) => {
+    dispatch(addIncome(data.name, data.date, data.amount));
     setAddModalVisible(false);
-    setShowDatePicker(false);
   };
 
-  const handleApplyFilter = () => {
-    setAppliedMonth(selectedMonth);
+  const handleApplyFilter = (month: string) => {
+    setAppliedMonth(month);
     setFilterModalVisible(false);
   };
 
-  const pieData = useMemo(() => {
-    return generatePieChartData(filteredIncomes);
-  }, [filteredIncomes]);
+  const openEditModal = (income: TransactionItem) => {
+    setSelectedIncome(income);
+    setEditModalVisible(true);
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -128,18 +84,13 @@ const IncomeListScreen: React.FC = () => {
         keyExtractor={item => item.toString()}
         renderItem={({ index }) => {
           if (index === 0) {
-            if (filteredIncomes && filteredIncomes.length !== 0) {
+            if (filteredIncomes.length > 0) {
               return (
                 <TransactionHeaderWithChart
                   pieData={pieData}
                   appliedMonth={appliedMonth}
-                  onFilterPress={() => {
-                    setSelectedMonth(appliedMonth);
-                    setFilterModalVisible(true);
-                  }}
-                  onAddPress={() => {
-                    setAddModalVisible(true);
-                  }}
+                  onFilterPress={() => setFilterModalVisible(true)}
+                  onAddPress={() => setAddModalVisible(true)}
                   addButtonTitle="+Add Income"
                 />
               );
@@ -147,136 +98,63 @@ const IncomeListScreen: React.FC = () => {
               return <ListEmptyScreen />;
             }
           } else if (index === 1) {
-            return <TransactionList data={filteredIncomes} onItemPress={openModal} type="income" />;
+            return (
+              <TransactionList
+                data={filteredIncomes}
+                onItemPress={openEditModal}
+                type="income"
+                singleItemStyle={{
+                  marginVertical: 5,
+                  marginHorizontal: 10,
+                }}
+              />
+            );
           } else {
             return <View />;
           }
         }}
       />
 
-      {/* Modal for Editing/Deleting Income */}
-      <Modal
-        visible={modalVisible}
-        animationType="fade"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Edit Income</Text>
-            <TextInput
-              placeholder="Income Name"
-              value={editedName}
-              onChangeText={setEditedName}
-              style={styles.input}
-              placeholderTextColor={Colors.placeholder}
-            />
-            <TextInput
-              placeholder="Date (YYYY-MM-DD)"
-              value={editedDate}
-              onChangeText={setEditedDate}
-              style={styles.input}
-              placeholderTextColor={Colors.placeholder}
-            />
-            <TextInput
-              placeholder="Amount"
-              value={editedAmount}
-              onChangeText={setEditedAmount}
-              keyboardType="numeric"
-              style={styles.input}
-              placeholderTextColor={Colors.placeholder}
-            />
-            <View style={styles.modalButtonContainer}>
-              <Button title="Save" onPress={handleSave} />
-              <Button title="Delete" color="red" onPress={handleDelete} />
-              <Button title="Cancel" onPress={() => setModalVisible(false)} />
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* Edit/Delete Modal */}
+      <EditDeleteModal
+        visible={isEditModalVisible}
+        onClose={() => setEditModalVisible(false)}
+        onSave={handleEditSave}
+        onDelete={handleEditDelete}
+        initialData={
+          selectedIncome
+            ? {
+                name: selectedIncome.name,
+                date: selectedIncome.date,
+                amount: selectedIncome.amount,
+              }
+            : null
+        }
+        title="Edit Income"
+        placeholderName="Income Name"
+        placeholderDate="Date (YYYY-MM-DD)"
+        placeholderAmount="Amount"
+      />
 
-      {/* Modal for Adding Income */}
-      <Modal
-        visible={addModalVisible}
-        animationType="fade"
-        transparent={true}
-        onRequestClose={() => {
-          setAddModalVisible(false);
-          setShowDatePicker(false);
-        }}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalBackdrop}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Add Income</Text>
-            <TextInput
-              placeholder="Income Name"
-              value={newName}
-              onChangeText={setNewName}
-              style={styles.input}
-              placeholderTextColor={Colors.placeholder}
-            />
+      {/* Add Modal */}
+      <AddModal
+        visible={isAddModalVisible}
+        onClose={() => setAddModalVisible(false)}
+        onAdd={handleAdd}
+        title="Add Income"
+        placeholderName="Income Name"
+        placeholderAmount="Amount"
+      />
 
-            <TextInput
-              placeholder="Amount"
-              value={newAmount}
-              onChangeText={setNewAmount}
-              keyboardType="numeric"
-              style={styles.input}
-              placeholderTextColor={Colors.placeholder}
-            />
-            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
-              <Text style={{ color: Colors.text }}>{newDate}</Text>
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                value={new Date(newDate)}
-                mode="date"
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onChange={(event, selectedDate) => {
-                  setShowDatePicker(false);
-                  if (selectedDate) {
-                    setNewDate(moment(selectedDate).format('YYYY-MM-DD'));
-                  }
-                }}
-              />
-            )}
-            <View style={styles.modalButtonContainer}>
-              <Button title="Add" onPress={handleAddIncome} />
-              <Button
-                title="Cancel"
-                onPress={() => {
-                  setAddModalVisible(false);
-                  setShowDatePicker(false);
-                }}
-              />
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
-
-      {/* Modal for Month Filtering */}
-      <Modal
-        visible={filterModalVisible}
-        animationType="fade"
-        transparent={true}
-        onRequestClose={() => setFilterModalVisible(false)}>
-        <View style={styles.modalBackdrop}>
-          <View style={styles.filterModalContainer}>
-            <Text style={styles.modalTitle}>Select Month</Text>
-            <Picker
-              selectedValue={selectedMonth}
-              onValueChange={itemValue => setSelectedMonth(itemValue)}
-              style={styles.picker}
-              mode="dropdown">
-              {monthOptions.map(month => (
-                <Picker.Item key={month} label={moment(month, 'YYYY-MM').format('MMMM YYYY')} value={month} />
-              ))}
-            </Picker>
-            <View style={styles.modalButtonContainer}>
-              <Button title="Apply" onPress={handleApplyFilter} />
-              <Button title="Cancel" onPress={() => setFilterModalVisible(false)} />
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* Filter Modal */}
+      <FilterModal
+        visible={isFilterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        onApply={handleApplyFilter}
+        selectedMonth={selectedMonth}
+        setSelectedMonth={setSelectedMonth}
+        monthOptions={monthOptions}
+      />
     </View>
   );
 };
@@ -287,89 +165,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  filterButton: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    width: 60,
-    alignItems: 'center',
-  },
-  filterButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  item: {},
-  itemText: {},
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    width: '90%',
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 8,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  filterModalContainer: {
-    width: '90%',
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 8,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  modalTitle: {
-    color: Colors.text,
-    fontSize: 22,
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  input: {
-    color: Colors.text,
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-  },
-  dateInput: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-    justifyContent: 'center',
-  },
-  modalButtonContainer: {
-    marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  picker: {
-    height: Platform.OS === 'ios' ? 200 : 50,
-    width: '100%',
   },
 });
