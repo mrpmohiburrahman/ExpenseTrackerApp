@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { clearIncomes } from '@store/slices/incomeSlice';
 import { clearExpenses } from '@store/slices/expenseSlice';
@@ -7,6 +7,7 @@ import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
 import { useDispatch } from 'react-redux';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from 'App/constants/metrics';
 import { Colors } from 'App/constants/Colors';
+import Text from './Text';
 
 const ListEmptyScreen = () => {
   const dispatch = useDispatch();

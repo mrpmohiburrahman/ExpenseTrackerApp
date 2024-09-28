@@ -18,50 +18,56 @@ export default function DashboardScreen(props: { segment: string }) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
-        data={sortedTransactions}
+        data={[0, 1]}
+        // extraData={selectedPeriod}
         ListHeaderComponent={() => {
-          if (!sortedTransactions || sortedTransactions.length === 0) return <View />;
-          return (
-            <>
-              <View style={{ paddingHorizontal: 10 }}>
-                <View style={{ paddingLeft: 10, paddingVertical: 20 }}>
-                  <Text style={{ color: '#363B64', fontSize: 24, fontWeight: '700' }}>Your Revenue</Text>
-                </View>
-                <PeriodSelector selectedPeriod={selectedPeriod} onSelect={setSelectedId} />
-              </View>
-              <Chart selectedPeriod={selectedPeriod} />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingHorizontal: 20,
-                  paddingBottom: 10,
-                  paddingTop: 20,
-                }}>
-                <Text style={{ fontWeight: '400', fontSize: 10, color: Colors.recentTransaction }}>
-                  RECENT TRANSACTIONS
-                </Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={{ fontWeight: '400', fontSize: 10, color: Colors.seeAll }}>See All</Text>
-                  <VectorIcon.SimpleLineIcons name="arrow-right" size={8} />
-                </View>
-              </View>
-            </>
-          );
+          if (!sortedTransactions || sortedTransactions.length === 0) return <ListEmptyScreen />;
         }}
         ListEmptyComponent={ListEmptyScreen}
-        renderItem={({}) => {
-          return (
-            <TransactionList
-              data={sortedTransactions}
-              type="both"
-              onItemPress={() => {}}
-              singleItemStyle={{
-                marginVertical: 5,
-                marginHorizontal: 20,
-              }}
-            />
-          );
+        renderItem={({ index }) => {
+          if (index === 0) {
+            if (sortedTransactions.length > 0) {
+              return (
+                <>
+                  <View style={{ paddingHorizontal: 10 }}>
+                    <View style={{ paddingLeft: 10, paddingVertical: 20 }}>
+                      <Text style={{ color: '#363B64', fontSize: 24, fontWeight: '700' }}>Your Revenue</Text>
+                    </View>
+                    <PeriodSelector selectedPeriod={selectedPeriod} onSelect={setSelectedId} />
+                  </View>
+                  <Chart selectedPeriod={selectedPeriod} />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      paddingHorizontal: 20,
+                      paddingBottom: 10,
+                      paddingTop: 20,
+                    }}>
+                    <Text style={{ fontWeight: '400', fontSize: 10, color: Colors.recentTransaction }}>
+                      RECENT TRANSACTIONS
+                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={{ fontWeight: '400', fontSize: 10, color: Colors.seeAll }}>See All</Text>
+                      <VectorIcon.SimpleLineIcons name="arrow-right" size={8} />
+                    </View>
+                  </View>
+                </>
+              );
+            } else return <ListEmptyScreen />;
+          } else if (index === 1)
+            return (
+              <TransactionList
+                data={sortedTransactions}
+                type="both"
+                onItemPress={() => {}}
+                singleItemStyle={{
+                  marginVertical: 5,
+                  marginHorizontal: 20,
+                }}
+              />
+            );
+          else return <View />;
         }}
       />
     </SafeAreaView>

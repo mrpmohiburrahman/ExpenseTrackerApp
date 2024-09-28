@@ -1,9 +1,9 @@
 // src/utils/transactionUtils.ts
-import { AppDispatch, RootState, store } from '@store/store';
-import { TransactionItem } from '../components/TransactionList'; // Adjust the import path as necessary
 import { addAllSortedTransactions, AllSortedTransactionsItem } from '@store/slices/allTransactionSlice';
+import { store } from '@store/store';
+import { TransactionItem } from '../components/TransactionList'; // Adjust the import path as necessary
 
-export const mergeAndSortTransactions = () => {
+export const mergeAndSortTransactions = async () => {
   const incomesState = store.getState().income;
   const expensesState = store.getState().expense;
   const { incomes } = incomesState;

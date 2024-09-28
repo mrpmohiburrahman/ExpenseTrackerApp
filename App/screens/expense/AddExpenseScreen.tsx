@@ -6,7 +6,12 @@ import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { addExpense } from '@store/slices/expenseSlice';
-import { mergeAndSortTransactions } from '@utils/transactionUtils';
+
+import { getBalanceByPeriod } from '@utils/balanceUtils';
+import { setBalances, setChartDataMonthly, setChartDataWeekly, setChartDataYearly } from '@store/slices/balanceSlice';
+import { mergeAndSortTransactions } from '@utils/mergeAndSortTransactions';
+import { getChartData } from '@utils/chartDataUtils';
+import { getChartedByPeriod } from '@utils/getChartedByPeriod';
 
 type RootStackParamList = {
   AddExpense: undefined;
@@ -23,16 +28,28 @@ const AddExpenseScreen: React.FC = () => {
   const [date, setDate] = useState<string>(''); // Ideally use a DatePicker
   const [amount, setAmount] = useState<string>('');
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name || !date || !amount) {
       Alert.alert('Error', 'Please fill all fields.');
       return;
     }
 
     dispatch(addExpense(name, date, parseFloat(amount)));
-    mergeAndSortTransactions();
     Alert.alert('Success', 'Expense added successfully.');
     navigation.goBack();
+    await mergeAndSortTransactions();
+    const balances = getBalanceByPeriod();
+    dispatch(setBalances(balances));
+    // Compute chart data
+    const chartDataWeekly = getChartedByPeriod('Week', balances, 5);
+    const chartDataMonthly = getChartedByPeriod('Month', balances, 5);
+    const chartDataYearly = getChartedByPeriod('Year', balances, 5);
+
+    // Dispatch actions to update the balance slice
+    dispatch(setBalances(balances));
+    dispatch(setChartDataWeekly(chartDataWeekly));
+    dispatch(setChartDataMonthly(chartDataMonthly));
+    dispatch(setChartDataYearly(chartDataYearly));
   };
 
   return (

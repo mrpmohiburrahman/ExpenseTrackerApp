@@ -1,3 +1,4 @@
+import { store } from '@store/store';
 import { getBalanceByPeriod } from './balanceUtils';
 
 interface ChartData {
@@ -7,57 +8,64 @@ interface ChartData {
 }
 
 export const getChartData = (period: 'Week' | 'Month' | 'Year', length: number = 5): ChartData[] => {
-  const balances = getBalanceByPeriod();
+  console.log('🚀 ~ getChartData ~ getChartData:', getChartData);
+  // const balances = getBalanceByPeriod();
   //   console.log('🚀 ~ getChartData ~ balances:', balances);
   let data: ChartData[] = [];
 
   if (period === 'Month') {
-    const monthlyBalances = balances.monthly;
-    const currentMonth = new Date().getMonth() + 1;
+    const { chartDataMonthly } = store.getState().balance;
+    return chartDataMonthly;
+    // const monthlyBalances = balances.monthly;
+    // const currentMonth = new Date().getMonth() + 1;
 
-    data = Array.from({ length }, (_, index) => {
-      const monthIndex = currentMonth - index;
-      const monthKey = `${new Date().getFullYear()}-${monthIndex < 1 ? monthIndex + 12 : monthIndex}`;
+    // data = Array.from({ length }, (_, index) => {
+    //   const monthIndex = currentMonth - index;
+    //   const monthKey = `${new Date().getFullYear()}-${monthIndex < 1 ? monthIndex + 12 : monthIndex}`;
 
-      return {
-        month: monthIndex < 1 ? monthIndex + 12 : monthIndex,
-        listenCount: monthlyBalances[monthKey] || 0,
-        specialCount: Math.max(...Object.values(monthlyBalances)) || 0,
-      };
-    }).reverse();
+    //   return {
+    //     month: monthIndex < 1 ? monthIndex + 12 : monthIndex,
+    //     listenCount: monthlyBalances[monthKey] || 0,
+    //     specialCount: Math.max(...Object.values(monthlyBalances)) || 0,
+    //   };
+    // }).reverse();
   } else if (period === 'Week') {
-    const weeklyBalances = balances.weekly;
-    const currentDate = new Date();
-    const currentWeek = getWeekNumber(currentDate);
+    const { chartDataWeekly } = store.getState().balance;
+    return chartDataWeekly;
+    // const weeklyBalances = balances.weekly;
+    // const currentDate = new Date();
+    // const currentWeek = getWeekNumber(currentDate);
 
-    data = Array.from({ length }, (_, index) => {
-      const weekIndex = currentWeek - index;
-      const weekStartDate = getStartDateOfWeek(currentDate.getFullYear(), weekIndex);
-      const weekEndDate = new Date(weekStartDate);
-      weekEndDate.setDate(weekEndDate.getDate() + 6); // End date is 6 days after start date
+    // data = Array.from({ length }, (_, index) => {
+    //   const weekIndex = currentWeek - index;
+    //   const weekStartDate = getStartDateOfWeek(currentDate.getFullYear(), weekIndex);
+    //   const weekEndDate = new Date(weekStartDate);
+    //   weekEndDate.setDate(weekEndDate.getDate() + 6); // End date is 6 days after start date
 
-      const formatedWeekKey = `${formatDate(weekStartDate)}-${formatDate(weekEndDate)}`;
+    //   const formatedWeekKey = `${formatDate(weekStartDate)}-${formatDate(weekEndDate)}`;
 
-      const weekKey = `${currentDate.getFullYear()}-W${weekIndex < 1 ? weekIndex + 52 : weekIndex}`;
-      return {
-        month: formatedWeekKey,
-        listenCount: weeklyBalances[weekKey] || 0,
-        specialCount: Math.max(...Object.values(weeklyBalances)) || 0,
-      };
-    }).reverse();
+    //   const weekKey = `${currentDate.getFullYear()}-W${weekIndex < 1 ? weekIndex + 52 : weekIndex}`;
+    //   return {
+    //     month: formatedWeekKey,
+    //     listenCount: weeklyBalances[weekKey] || 0,
+    //     specialCount: Math.max(...Object.values(weeklyBalances)) || 0,
+    //   };
+    // }).reverse();
   } else if (period === 'Year') {
-    const yearlyBalances = balances.yearly;
-    const currentYear = new Date().getFullYear();
+    const { chartDataYearly } = store.getState().balance;
+    return chartDataYearly;
+    // const yearlyBalances = balances.yearly;
+    // const currentYear = new Date().getFullYear();
 
-    data = Array.from({ length }, (_, index) => {
-      const yearKey = `${currentYear - index}`;
+    // data = Array.from({ length }, (_, index) => {
+    //   const yearKey = `${currentYear - index}`;
 
-      return {
-        month: yearKey,
-        listenCount: yearlyBalances[yearKey] || 0,
-        specialCount: Math.max(...Object.values(yearlyBalances)) || 0,
-      };
-    }).reverse();
+    //   return {
+    //     month: yearKey,
+    //     listenCount: yearlyBalances[yearKey] || 0,
+    //     specialCount: Math.max(...Object.values(yearlyBalances)) || 0,
+    //   };
+    // }).reverse();
   }
 
   return data;

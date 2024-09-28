@@ -11,6 +11,7 @@ import GoalsScreen from '@screens/Goals/GoalsScreen';
 import LogoutScreen from '@screens/Logout/LogoutScreen';
 import ProfileButton from '@components/ProfileButton';
 import NotificationButton from '@components/NotificationButton'; // New Component
+import { moderateScale } from 'react-native-size-matters';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,7 +24,7 @@ const BottomTabNavigator: React.FC = () => {
         headerTitleAlign: 'left',
 
         headerStyle: {
-          height: 130,
+          height: Platform.select({ ios: 130, android: moderateScale(80) }),
         },
         headerTitleStyle: {
           fontSize: 20,

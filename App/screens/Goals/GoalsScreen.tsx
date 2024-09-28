@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { Colors } from 'App/constants/Colors';
 import { clearIncomes } from '@store/slices/incomeSlice';
@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { addRandomIncomes } from '@utils/RandomData/addRandomIncomes';
 import { addRandomExpenses } from '@utils/RandomData/addRandomExpenses';
 import { clearAllSortedTransactions } from '@store/slices/allTransactionSlice';
+import Text from '@components/Text';
 
 const GoalsScreen = () => {
   const dispatch = useDispatch();

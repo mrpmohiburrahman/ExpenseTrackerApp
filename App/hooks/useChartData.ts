@@ -13,7 +13,9 @@ const useChartData = (selectedPeriod: any, dataPoints: number = 5): ChartData[] 
 
   useEffect(() => {
     const fetchData = () => {
+      console.log('🚀 ~ useChartData ~ useChartData:--------1', useChartData);
       const _data = getChartData(selectedPeriod, dataPoints);
+      console.log('🚀 ~ useChartData ~ useChartData:--------2', useChartData);
       setData(() => _data as ChartData[]);
     };
 

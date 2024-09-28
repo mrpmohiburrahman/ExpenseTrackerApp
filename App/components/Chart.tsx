@@ -45,11 +45,13 @@ const Chart = ({ selectedPeriod }: ChartType) => {
           height: SCREEN_HEIGHT * 0.33,
         }}>
         <CartesianChart
+        
           data={data}
           xKey={'month'}
           yKeys={['listenCount', 'specialCount']}
           domainPadding={{ left: 40, right: 40, top: 30 }}
           xAxis={{
+            
             // font: toolTipFont,
             lineWidth: 0,
             labelPosition: 'outset',

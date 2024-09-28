@@ -4,18 +4,20 @@ import mmkvStorage from './mmkvStorage';
 import expenseReducer from './slices/expenseSlice';
 import incomeReducer from './slices/incomeSlice';
 import allTransactionReducer from './slices/allTransactionSlice';
+import balanceReducer from './slices/balanceSlice';
 import { thunk } from 'redux-thunk';
 
 const rootReducer = combineReducers({
   income: incomeReducer,
   expense: expenseReducer,
   allTransaction: allTransactionReducer,
+  balance: balanceReducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage: mmkvStorage,
-  whitelist: ['income', 'expense', 'allTransaction'],
+  whitelist: ['income', 'expense', 'allTransaction', 'balance'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
