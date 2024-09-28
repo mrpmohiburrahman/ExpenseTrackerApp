@@ -1,9 +1,7 @@
-// App/screens/ExpenseListScreen.tsx
-
 import HeaderWithActions from '@components/HeaderWithActions';
 import TransactionList, { TransactionItem } from '@components/TransactionList';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker'; // Ensure this is installed
+import { Picker } from '@react-native-picker/picker';
 import { addExpense, deleteExpense, editExpense, ExpenseItem } from '@store/slices/expenseSlice';
 import { RootState } from '@store/store';
 import { generatePieChartData } from '@utils/chartUtils';
@@ -12,11 +10,12 @@ import { filterTransactionsByMonth } from '@utils/filterTransactionsByMonth';
 import { mergeAndSortTransactions } from '@utils/transactionUtils';
 import { validateTransactionInput } from '@utils/validateTransactionInput';
 import { Colors } from 'App/constants/Colors';
-import moment from 'moment'; // Ensure moment is installed
+import moment from 'moment';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
+  FlatList,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -27,10 +26,9 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { PieChart } from 'react-native-gifted-charts'; // Ensure this is installed
+import { PieChart } from 'react-native-gifted-charts';
 import { useDispatch, useSelector } from 'react-redux';
 
-// Generate list of months from current to previous 12 months
 const monthOptions = generateLast12Months();
 
 const ExpenseListScreen: React.FC = () => {
@@ -43,13 +41,11 @@ const ExpenseListScreen: React.FC = () => {
   const [editedDate, setEditedDate] = useState<string>('');
   const [editedAmount, setEditedAmount] = useState<string>('');
 
-  // States for month filtering
   const [filterModalVisible, setFilterModalVisible] = useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('YYYY-MM'));
   const [appliedMonth, setAppliedMonth] = useState<string>(moment().format('YYYY-MM'));
   const [filteredExpenses, setFilteredExpenses] = useState<TransactionItem[]>([]);
 
-  // States for Add Expense Modal
   const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
   const [newName, setNewName] = useState<string>('');
   const [newDate, setNewDate] = useState<string>(moment().format('YYYY-MM-DD'));
@@ -86,7 +82,7 @@ const ExpenseListScreen: React.FC = () => {
       );
       setModalVisible(false);
       setSelectedExpense(null);
-      // Reset the form and close the modal
+
       setNewName('');
       setNewDate(moment().format('YYYY-MM-DD'));
       setNewAmount('');
@@ -119,55 +115,60 @@ const ExpenseListScreen: React.FC = () => {
     setShowDatePicker(false);
   };
 
-  // Handle Apply in filter modal
   const handleApplyFilter = () => {
     setAppliedMonth(selectedMonth);
     setFilterModalVisible(false);
   };
 
-  // Compute pieData based on filteredExpenses
   const pieData = useMemo(() => {
     return generatePieChartData(filteredExpenses);
   }, [filteredExpenses]);
 
   return (
     <View style={styles.container}>
-      {/* Pie Chart */}
-      <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-        {pieData.length > 0 ? (
-          <PieChart
-            showText
-            textColor="white"
-            radius={150}
-            textSize={20}
-            data={pieData}
-            // Optional: Add other PieChart props as needed
-          />
-        ) : (
-          <Text style={styles.noDataText}>No expenses for selected month.</Text>
-        )}
-      </View>
+      <FlatList
+        data={[0, 1]}
+        renderItem={({ index }) => {
+          if (index === 0)
+            return (
+              <>
+                {/* Pie Chart */}
+                <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+                  {pieData.length > 0 ? (
+                    <PieChart showText textColor="white" radius={150} textSize={20} data={pieData} />
+                  ) : (
+                    <Text style={styles.noDataText}>No expenses for selected month.</Text>
+                  )}
+                </View>
 
-      {/* Reusable Header with Actions */}
-      <HeaderWithActions
-        filterTitle={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
-        onFilterPress={() => {
-          setSelectedMonth(appliedMonth); // Initialize picker with current filter
-          setFilterModalVisible(true);
-        }}
-        addButtonTitle="+Add Expense"
-        onAddPress={() => {
-          setAddModalVisible(true);
-          // Handle add income press
+                {/* Reusable Header with Actions */}
+                <HeaderWithActions
+                  filterTitle={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
+                  onFilterPress={() => {
+                    setSelectedMonth(appliedMonth);
+                    setFilterModalVisible(true);
+                  }}
+                  addButtonTitle="+Add Expense"
+                  onAddPress={() => {
+                    setAddModalVisible(true);
+                  }}
+                />
+              </>
+            );
+          else if (index === 1) {
+            return (
+              <>
+                <TransactionList data={filteredExpenses} onItemPress={openModal} type="expense" />
+              </>
+            );
+          }
         }}
       />
-
-      <TransactionList data={filteredExpenses} onItemPress={openModal} type="expense" />
 
       {/* Modal for Editing/Deleting Expense */}
       <Modal
         visible={modalVisible}
-        animationType="fade" // Changed to 'fade'
+        animationType="fade"
         transparent={true}
         onRequestClose={() => setModalVisible(false)}>
         <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
@@ -257,7 +258,7 @@ const ExpenseListScreen: React.FC = () => {
       {/* Modal for Month Filtering */}
       <Modal
         visible={filterModalVisible}
-        animationType="fade" // Changed to 'fade'
+        animationType="fade"
         transparent={true}
         onRequestClose={() => setFilterModalVisible(false)}>
         <TouchableWithoutFeedback onPress={() => setFilterModalVisible(false)}>
@@ -305,12 +306,12 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 10,
     borderRadius: 5,
-    // width: 60,
+
     alignItems: 'center',
   },
   filterButtonText: {
     color: Colors.text,
-    // fontWeight: 'bold',
+
     fontWeight: '600',
   },
   headerTitle: {
@@ -334,7 +335,7 @@ const styles = StyleSheet.create({
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -343,22 +344,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 8,
-    elevation: 5, // Adds shadow for Android
-    shadowColor: '#000', // Adds shadow for iOS
-    shadowOffset: { width: 0, height: 2 }, // Adds shadow for iOS
-    shadowOpacity: 0.25, // Adds shadow for iOS
-    shadowRadius: 4, // Adds shadow for iOS
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   filterModalContainer: {
     width: '90%',
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 8,
-    elevation: 5, // Adds shadow for Android
-    shadowColor: '#000', // Adds shadow for iOS
-    shadowOffset: { width: 0, height: 2 }, // Adds shadow for iOS
-    shadowOpacity: 0.25, // Adds shadow for iOS
-    shadowRadius: 4, // Adds shadow for iOS
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   modalTitle: {
     fontSize: 22,

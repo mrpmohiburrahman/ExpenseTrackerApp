@@ -17,6 +17,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
+  FlatList,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -120,23 +121,37 @@ const IncomeListScreen: React.FC = () => {
   }, [filteredIncomes]);
   return (
     <View style={styles.container}>
-      <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-        <PieChart showText textColor="white" radius={150} textSize={20} data={pieData} />
-      </View>
-      {/* Reusable Header with Actions */}
-      <HeaderWithActions
-        filterTitle={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
-        onFilterPress={() => {
-          setSelectedMonth(appliedMonth);
-          setFilterModalVisible(true);
-        }}
-        addButtonTitle="+Add Income"
-        onAddPress={() => {
-          setAddModalVisible(true);
+      <FlatList
+        data={[0, 1]}
+        renderItem={({ index }) => {
+          if (index === 0)
+            return (
+              <>
+                <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+                  <PieChart showText textColor="white" radius={150} textSize={20} data={pieData} />
+                </View>
+                {/* Reusable Header with Actions */}
+                <HeaderWithActions
+                  filterTitle={moment(appliedMonth, 'YYYY-MM').format('MMMM YYYY')}
+                  onFilterPress={() => {
+                    setSelectedMonth(appliedMonth);
+                    setFilterModalVisible(true);
+                  }}
+                  addButtonTitle="+Add Income"
+                  onAddPress={() => {
+                    setAddModalVisible(true);
+                  }}
+                />
+              </>
+            );
+          else if (index === 1)
+            return (
+              <>
+                <TransactionList data={filteredIncomes} onItemPress={openModal} type="income" />
+              </>
+            );
         }}
       />
-
-      <TransactionList data={filteredIncomes} onItemPress={openModal} type="income" />
 
       {/* Modal for Editing/Deleting Income */}
       <Modal
