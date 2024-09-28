@@ -1,18 +1,13 @@
 // utils/chartUtils.ts
 import { TransactionItem } from '@components/TransactionList';
 import { truncateToOneWord } from './truncateToOneWord';
+import { additionalColors, colorList } from 'App/constants/Colors';
 
 interface PieChartData {
   value: number;
-  color: string;
-  text: string;
 }
 
-export const generatePieChartData = (
-  transactions: TransactionItem[],
-  colorList: string[],
-  additionalColors: string[]
-): PieChartData[] => {
+export const generatePieChartData = (transactions: TransactionItem[]): PieChartData[] => {
   const grouped = transactions.reduce(
     (acc, income) => {
       acc[income.name] = (acc[income.name] || 0) + income.amount;

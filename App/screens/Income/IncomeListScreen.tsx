@@ -115,15 +115,8 @@ const IncomeListScreen: React.FC = () => {
     setFilterModalVisible(false);
   };
 
-  const truncateToOneWord = (text: string) => {
-    return text.split(' ')[0];
-  };
-
-  const colorList = ['#619780', '#485B42', '#B97016', '#D9B758'];
-  const additionalColors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#8E44AD', '#16A085', '#E74C3C', '#F1C40F'];
-
   const pieData = useMemo(() => {
-    return generatePieChartData(filteredIncomes, colorList, additionalColors);
+    return generatePieChartData(filteredIncomes);
   }, [filteredIncomes]);
   return (
     <View style={styles.container}>
